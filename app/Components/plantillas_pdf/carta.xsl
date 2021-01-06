@@ -3,30 +3,54 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
     <xsl:decimal-format name="chilean" decimal-separator="," grouping-separator="."/>
-    
+
     <xsl:output method="xml" version="1.0" omit-xml-declaration="yes"
                     indent="yes" encoding="ISO-8859-1"/>
 
     <xsl:template match="/">
         <div class="hojaCarta">
            <xsl:apply-templates select="DTE/*[1]"/>
-        </div> 
-        
+        </div>
+
         <div class="ted">
             <xsl:call-template name="TED" />
-             
+
              <span style="font-size:8pt; font-family:sans-serif;">
                 Timbre Electrónico SII
             </span>
             <br></br>
             <span style="font-size:8pt; font-family:sans-serif;">
                 Res. var:numero_resolucion de var:ano_resolucion - Verifique Documento: var:web_verificacion
-            </span>  
+            </span>
         </div>
-                                        
+
         <div style="width:6.5cm;height:6.04cm;float:right;">
             <xsl:call-template name="Totales" />
         </div>
+
+        <div>
+        LEY DE SUBVENCIONES D.F.L. Nº2 DE 1998, DEL MINISTERIO DE EDUCACIÓN
+        Artículo 24: Los Establecimientos Educacionales de Financiamiento Compartido podrán efectuar cobros mensuales por alumno no mayores de 4 U.S.E. Para los efectos de
+        este título se entenderá por cobro mensual promedio el valor que resulte de aplicar el artículo 34º de la presente ley. Los cobros que efectúen los establecimientos
+        educacionales de Financiamiento Compartido solo podrán ser los comunicados conforme al inciso del artículo 26, los que deberán constar en recibos timbrados por el Servicio
+        de Impuestos Internos y serán compatibles con otros cobros, obligatorios para los padres y apoderados, cualquiera sea su denominación y finalidad.
+        Artículo 26: Simultáneamente deberá informar el respecto mediante comunicación escrita a los padres y apoderados, dándoles a conocer también junto con la propuesta
+        educativa, el sistema de exenciones de cobro a que se refiera el artículo 24 y una indicación precisa del monto inicial de cobro y el máximo de reajustabilidad por sobre el Índice
+        de Precios al Consumidor (I.P.C.) o de la variación de la unidad de subvención educacional (U.S.E.) que se aplicará durante los tres años siguientes. Asimismo, a partir del año
+        de vigencia del cobro inicial, el sostenedor podrá fijar el valor del cobro del nuevo trienio, pero deberá respectar el sistema de reajustabilidad ya determinado para los dos
+        primeros años. En ningún caso podrá modificar lo informado para ese período.
+        Se deberá comunicar a la Secretaría Regional Ministerial respectiva los montos de cobros anuales, antes del 30 de octubre de cada año. El establecimiento deberá informar
+        anualmente a la comunidad, con copia al Ministerio de Educación, sobre la forma en que utilizaron los recursos, el avance del proyecto educativo y su contribución al
+        mejoramiento de la calidad de la educación, pudiendo los padres y apoderados, en todo momento formular ideas y proposiciones al respecto. La comunicación al Ministerio de
+        Educación sólo tendrá por objeto acreditar el cumplimiento de esta obligación.
+        Artículo 62: Inciso primero, DSE Nº755/97: Entre los meses de noviembre de un año y marzo del siguiente, el sostenedor deberá determinar los beneficios de exenciones de
+        pago y su correspondiente monto de exención, en concordancia con el reglamento interno y sus proyecciones de ingreso y asistencia media. El establecimiento educacional de
+        financiamiento compartido deberá comunicar los montos de exención de pago de arancel a los padres y apoderados de los alumnos beneficiados con el sistema, para los cuales
+        la exención deberá mantenerse en los mismos términos, a lo menos, hasta el término del año escolar respectivo.
+        Artículo 62, inciso quinto, DSE Nº755/97: La aplicación del sistema de becas se efectuará en los establecimientos educacionales de educación media del sector municipal, sin
+        perjuicio del beneficio de gratuidad establecido en el inciso final del artículo 23 del decreto con fuerza de ley Nº2, de Educación, de 1998.
+        </div>
+
         <!-- FINAL HOJA 1 -->
 
         <xsl:choose>
@@ -47,46 +71,46 @@
                                 Res. var:numero_resolucion de var:ano_resolucion - Verifique Documento: var:web_verificacion
                         </span>
                 </div>
-                    <div style="width:8cm;float:left;margin-left:0.25cm;border:1px solid black;margin-top:0cm;">
-                            <table style="float:left;width:8cm;font-family:Arial,Helvetica;color:black;font-size:8pt;">
-                                <tr>
-                                    <td colspan="2" style="text-align:center;">ACUSE DE RECIBO</td>
-                                </tr>
-                                <tr>
-                                    <td style="width:1.9cm;">NOMBRE</td>
-                                    <td style="border-bottom:1px solid black;"></td>
-                                </tr>
-                                <tr>
-                                    <td>R.U.T</td>
-                                    <td style="border-bottom:1px solid black;"></td>
-                                </tr>
-                                <tr>
-                                    <td>FECHA</td>
-                                    <td style="border-bottom:1px solid black;"></td>
-                                </tr>
-                                <tr>
-                                    <td>RECINTO</td>
-                                    <td style="border-bottom:1px solid black;"></td>
-                                </tr>
-                                <tr>
-                                    <td>&#xa0;</td>
-                                    <td>&#xa0;</td>
-                                </tr>
-                                <tr>
-                                    <td>FIRMA</td>
-                                    <td style="border-bottom:1px solid black;"></td>
-                                </tr>
-                            </table>
-                            <div style="text-align:justify;margin-top:0.1cm;font-size:6pt;width:11.75cm;font-family:Arial,Helvetica;color:black;float:left;">
-                           EL ACUSE RECIBO QUE SE DECLARA EN ESTE ACTO, DE ACUERDO A LO
+                <div style="width:8cm;float:left;margin-left:0.25cm;border:1px solid black;margin-top:0cm;">
+                        <table style="float:left;width:8cm;font-family:Arial,Helvetica;color:black;font-size:8pt;">
+                            <tr>
+                                <td colspan="2" style="text-align:center;">ACUSE DE RECIBO</td>
+                            </tr>
+                            <tr>
+                                <td style="width:1.9cm;">NOMBRE</td>
+                                <td style="border-bottom:1px solid black;"></td>
+                            </tr>
+                            <tr>
+                                <td>R.U.T</td>
+                                <td style="border-bottom:1px solid black;"></td>
+                            </tr>
+                            <tr>
+                                <td>FECHA</td>
+                                <td style="border-bottom:1px solid black;"></td>
+                            </tr>
+                            <tr>
+                                <td>RECINTO</td>
+                                <td style="border-bottom:1px solid black;"></td>
+                            </tr>
+                            <tr>
+                                <td>&#xa0;</td>
+                                <td>&#xa0;</td>
+                            </tr>
+                            <tr>
+                                <td>FIRMA</td>
+                                <td style="border-bottom:1px solid black;"></td>
+                            </tr>
+                        </table>
+                        <div style="text-align:justify;margin-top:0.1cm;font-size:6pt;width:11.75cm;font-family:Arial,Helvetica;color:black;float:left;">
+                       EL ACUSE RECIBO QUE SE DECLARA EN ESTE ACTO, DE ACUERDO A LO
 
-                     DISPUESTO EN LA LETRA b) DEL Art.4 Y LA LETRA c) DEL Art.5 DE LA LEY
+                 DISPUESTO EN LA LETRA b) DEL Art.4 Y LA LETRA c) DEL Art.5 DE LA LEY
 
-                     19.983, ACREDITA QUE LA ENTREGA DE MERCADERIA(S) O SERVICIO(S)
+                 19.983, ACREDITA QUE LA ENTREGA DE MERCADERIA(S) O SERVICIO(S)
 
-                     PRESTADO(S) HA(N) SIDO RECIBIDO(S) EN TOTAL CONFORMIDAD.
-                            </div>
-                    </div>
+                 PRESTADO(S) HA(N) SIDO RECIBIDO(S) EN TOTAL CONFORMIDAD.
+                        </div>
+                </div>
 
 
                 <div style="width:6.0cm;height:4.04cm;float:right;">
@@ -125,8 +149,8 @@
                 <xsl:value-of select="Encabezado/IdDoc/FmaPagExp" />
             </xsl:with-param>
         </xsl:apply-templates>
-    
-    <xsl:choose>    
+
+    <xsl:choose>
         <xsl:when test="DscRcgGlobal">
             <div id="listaDscRcgGlobal">
                 <table id="tablaDscRcgGlobal" style="width:19.6cm;font-size:8pt; font-family:Arial,Helvetica;color:black; text-align:left;">
@@ -158,14 +182,14 @@
                                 <span style="font-weight:bold;">
                                     Valor
                                 </span>
-                            </td>                                                               
+                            </td>
                         </tr>
-                    </thead>                                            
+                    </thead>
                     <tbody>
                         <xsl:for-each select="DscRcgGlobal">
                             <tr>
                                 <td class="centrado" style="border-bottom:0.5pt solid black;">
-                                    <span>  
+                                    <span>
                                         <xsl:choose>
                                             <xsl:when test="TpoMov='R'">
                                                 RECARGO
@@ -173,14 +197,14 @@
                                             <xsl:when test="TpoMov='D'">
                                                 DESCUENTO
                                             </xsl:when>
-                                        </xsl:choose>                                                   
+                                        </xsl:choose>
                                     </span>
-                                </td>                    
+                                </td>
                                 <td class="centrado" style="border-bottom:0.5pt solid black;">
                                     <span>
                                         <xsl:value-of select="GlosaDR" />
                                     </span>
-                                </td>                    
+                                </td>
                                 <td class="centrado" style="border-bottom:0.5pt solid black;">
                                     <span>
                                         <xsl:choose>
@@ -190,19 +214,19 @@
                                             <xsl:when test="TpoValor='%'">
                                                 % PORCENTAJE
                                             </xsl:when>
-                                        </xsl:choose>   
+                                        </xsl:choose>
                                     </span>
                                 </td>
                                 <td  class="centrado" style="border-bottom:0.5pt solid black;">
                                     <span>
                                         <xsl:value-of select='ValorDR'/>
                                     </span>
-                                </td>    
-                            </tr>                                 
-                        </xsl:for-each>                                                                                                                                                                                                            
-                    </tbody>     
-                </table>  
-            </div>                                                  
+                                </td>
+                            </tr>
+                        </xsl:for-each>
+                    </tbody>
+                </table>
+            </div>
         </xsl:when>
     </xsl:choose>
 
@@ -359,7 +383,7 @@
             </xsl:when>
         </xsl:choose>
 
-    <xsl:choose>    
+    <xsl:choose>
         <xsl:when test="Referencia">
             <div id="listaReferencias">
                 <table id="tablaReferencias" style="width:19.6cm;font-size:8pt; font-family:Arial,Helvetica;color:black; text-align:left;">
@@ -367,7 +391,7 @@
                         <tr>
                             <td colspan="4" style="text-align:center;border-bottom:0.5pt solid black;">
                                 <span style="font-weight:bold;">
-                                Referencias a otros documentos   
+                                Referencias a otros documentos
                                 </span>
                             </td>
                         </tr>
@@ -386,14 +410,14 @@
                                 <span style="font-weight:bold;">
                                     Fecha
                                 </span>
-                            </td> 
+                            </td>
                             <td style="width:7cm;text-align:center;border-bottom:0.5pt solid black;">
                                 <span style="font-weight:bold;">
                                     Razón Referencia
                                 </span>
-                            </td>                                                               
+                            </td>
                         </tr>
-                    </thead>                                            
+                    </thead>
                     <tbody>
                         <xsl:for-each select="Referencia">
                             <tr>
@@ -433,11 +457,11 @@
                                             <xsl:when test="TpoDocRef=45">
                                                 FACTURA DE COMPRA
                                             </xsl:when>
-                                            <xsl:when test="TpoDocRef=46">    
+                                            <xsl:when test="TpoDocRef=46">
                                             FACTURA DE COMPRA ELECTRÓNICA
                                             </xsl:when>
                                             <xsl:when test="TpoDocRef=50">
-                                                GUÍA DE DESPACHO 
+                                                GUÍA DE DESPACHO
                                             </xsl:when>
                                             <xsl:when test="TpoDocRef=52">
                                                 GUÍA DE DESPACHO ELECTRÓNICA
@@ -458,7 +482,7 @@
                                                 LIQUIDACIÓN
                                             </xsl:when>
                                             <xsl:when test="TpoDocRef=110">
-                                                FACTURA DE EXPORTACIÓN ELECTRÓNICA 
+                                                FACTURA DE EXPORTACIÓN ELECTRÓNICA
                                             </xsl:when>
                                             <xsl:when test="TpoDocRef=111">
                                                 NOTA DE DÉBITO DE EXPORTACIÓN ELECTRÓNICA
@@ -509,22 +533,22 @@
                                                 CERTIFICADO DE DEPÓSITO BOLSA PROD. CHILE
                                             </xsl:when>
                                             <xsl:when test="TpoDocRef=815">
-                                                VALE DE PRENDA BOLSA PROD. CHILE 
+                                                VALE DE PRENDA BOLSA PROD. CHILE
                                             </xsl:when>
                                             <xsl:when test="TpoDocRef='SET'">
                                                 SET
-                                            </xsl:when>                                              
+                                            </xsl:when>
                                             <xsl:otherwise>
                                                  <xsl:value-of select='TpoDocRef'/>
-                                            </xsl:otherwise>                                          
-                                        </xsl:choose>                                                          
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                     </span>
-                                </td>                    
+                                </td>
                                 <td class="centrado" style="border-bottom:0.5pt solid black;">
                                     <span>
                                         <xsl:value-of select="FolioRef" />
                                     </span>
-                                </td>                    
+                                </td>
                                 <td class="centrado" style="border-bottom:0.5pt solid black;">
                                     <span>
                                         <xsl:value-of select="substring(FchRef,string-length(FchRef)-1,2)" />-<xsl:value-of select="substring(FchRef,string-length(FchRef)-4,2)" />-<xsl:value-of select="substring(FchRef,string-length(FchRef)-9,4)" />
@@ -534,15 +558,15 @@
                                     <span>
                                         <xsl:value-of select='RazonRef'/>
                                     </span>
-                                </td>    
-                            </tr>                                 
-                        </xsl:for-each>                                                                                                                                                                                                            
-                    </tbody>     
-                </table>  
-            </div>                                                  
+                                </td>
+                            </tr>
+                        </xsl:for-each>
+                    </tbody>
+                </table>
+            </div>
         </xsl:when>
     </xsl:choose>
-	
+
         <!--  La lista de detalle -->
         <div id="listaDetalle">
             <table id="tablaDetalle" style="width:100%;font-size:7pt; font-family:Arial,Helvetica;color:black; text-align:left;">
@@ -550,7 +574,7 @@
                     <tr>
                         <td style="width:2cm;text-align:center;border-bottom:0.5pt solid black;">
                             <span style="font-weight:bold;">
-                                Código               
+                                Código
                             </span>
                         </td>
                         <td style="width:9cm;text-align:center;border-bottom:0.5pt solid black;">
@@ -562,17 +586,17 @@
                             <span style="font-weight:bold;">
                                 Cantidad
                             </span>
-                        </td>  
+                        </td>
                         <td style="width:1cm;text-align:center;border-bottom:0.5pt solid black;">
                             <span style="font-weight:bold;">
                                 Unid
                             </span>
-                        </td>                                                                                       
+                        </td>
                         <td style="width:2cm;text-align:center;border-bottom:0.5pt solid black;">
                             <span style="font-weight:bold;">
                                 Precio
                             </span>
-                        </td>                                                                
+                        </td>
                         <td style="width:2cm;text-align:center;border-bottom:0.5pt solid black;">
                             <span style="font-weight:bold;">
                                 Desc/Rcg
@@ -584,7 +608,7 @@
                             </span>
                         </td>
                     </tr>
-                </thead>                                            
+                </thead>
                 <tbody>
                     <xsl:for-each select="Detalle">
                         <tr>
@@ -592,25 +616,25 @@
                                 <span>
                                     <xsl:value-of select="CdgItem/VlrCodigo" />
                                 </span>
-                            </td>                    
+                            </td>
                             <td class="items" style="border-bottom:0.5pt solid black;text-align:left;">
                                 <span>
                                     <xsl:value-of select="NmbItem" />
                                     <br />
-                                    <xsl:value-of select="DscItem" />  
+                                    <xsl:value-of select="DscItem" />
                                 </span>
-                            </td>                    
+                            </td>
                             <td class="centrado" style="border-bottom:0.5pt solid black;">
                                 <span>
-                                    <xsl:choose>					
+                                    <xsl:choose>
                                         <xsl:when test="QtyItem != 'NaN'">
                                             <xsl:value-of select='format-number(QtyItem, "#.###,####", "chilean")'/>
                                         </xsl:when>
-                                    </xsl:choose>  
+                                    </xsl:choose>
                                 </span>
                             </td>
                             <td  class="centrado" style="border-bottom:0.5pt solid black;">
-                                <xsl:value-of select='UnmdItem'/> 
+                                <xsl:value-of select='UnmdItem'/>
                             </td>
                             <td  class="centrado" style="border-bottom:0.5pt solid black;">
                                 <span>
@@ -620,12 +644,12 @@
                                             </xsl:when>
                                             <xsl:otherwise>
                                             0
-                                            </xsl:otherwise>                                                                           
+                                            </xsl:otherwise>
                                         </xsl:choose>
                                 </span>
-                            </td>                                    
+                            </td>
                             <td  class="centrado" style="border-bottom:0.5pt solid black;">
-                                <span> 									
+                                <span>
                                     <xsl:if test="sum(DescuentoMonto) != 0">
                                         D. <xsl:value-of select='format-number(DescuentoMonto, "#.###,##", "chilean")'/>
                                     </xsl:if>
@@ -636,20 +660,20 @@
                                 </span>
                             </td>
                             <td class="centrado" style="border-bottom:0.5pt solid black;">
-                                <span> 
-                                    <xsl:value-of select='format-number(MontoItem, "#.###,##", "chilean")'/>    
+                                <span>
+                                    <xsl:value-of select='format-number(MontoItem, "#.###,##", "chilean")'/>
                                 </span>
                             </td>
                         </tr>
-                    </xsl:for-each>                    
-                </tbody>     
+                    </xsl:for-each>
+                </tbody>
             </table>
-                                        
-                                         
+
+
         </div>
         <xsl:if test="sum(/DTE/*[1]/Encabezado/Totales/ImptoReten/MontoImp) != 0">
         <div id="listaImpAdic">
-            <table id="tablaImpAdic" style="width:19.5cm;font-size:8pt; font-family:Arial,Helvetica;color:black; text-align:left;">   
+            <table id="tablaImpAdic" style="width:19.5cm;font-size:8pt; font-family:Arial,Helvetica;color:black; text-align:left;">
                 <thead>
                     <tr>
                         <td style="width:15cm;text-align:center;border-bottom:0.5pt solid black;">
@@ -664,7 +688,7 @@
                         </td>
                     </tr>
                     </thead>
-                    
+
                     <tbody>
                         <xsl:for-each select="/DTE/*[1]/Encabezado/Totales/ImptoReten">
                             <xsl:choose>
@@ -702,10 +726,10 @@
                                             </xsl:when>
                                             <xsl:otherwise>
                                                 CORREGIR EN TEMPLATE XSL
-                                            </xsl:otherwise>                                             
+                                            </xsl:otherwise>
                                         </xsl:choose>
                                     </span>
-                                </td>                    
+                                </td>
                                 <td class="centrado" style="border-bottom:0.5pt solid black;">
                                     <span>
                                         <xsl:value-of select='format-number(MontoImp, "#.###,####", "chilean")' />
@@ -714,11 +738,11 @@
                             </tr>
                             </xsl:when>
                             </xsl:choose>
-                        </xsl:for-each>                                                                                                                                                                                                            
+                        </xsl:for-each>
                     </tbody>
             </table>
-        </div>        
-        </xsl:if>           
+        </div>
+        </xsl:if>
     </xsl:template>
 
 
@@ -728,13 +752,13 @@
         <xsl:param name="tipo" />
         <xsl:param name="title" />
         <div class="header">
-            
-                        
+
+
             <div class="RznSocActeco">
                 var:logo1
                 <div class="contenedorLogotipo">
                     <img src="var:logotipo"/>
-                </div>                 
+                </div>
                 var:logo2
                 <div class="divRznSoc" style="margin-left:4.1cm;">
                 <span style="font-size:11pt; font-family:Arial,Helvetica;font-weight:bold; color:red;">
@@ -2154,20 +2178,20 @@
                         </xsl:choose>
                     </span>
                 </div>
-                
+
                 <br/>
 
                 <div class="casaMatriz">
                      <span class="spanCasaMatriz">
                         var:sucursales
-                    </span>  
-                </div>     
-                                                                                                                                                                                                                                                          
-            </div>            
- 
-                       
+                    </span>
+                </div>
+
+            </div>
+
+
             <div class="headerDerecha">
-                
+
                 <!-- Recuadro con folio -->
                 <div class="recuadroFolio">
 
@@ -2177,27 +2201,27 @@
                             <xsl:with-param name="rut">
                                 <xsl:value-of select="RUTEmisor" />
                             </xsl:with-param>
-                        </xsl:call-template>         
-                    </div>  
-					
-                    <br/> 
+                        </xsl:call-template>
+                    </div>
+
+                    <br/>
                     <div class="TipoDTE">
                         <xsl:choose>
                             <xsl:when test="$tipo=0">
                                 VALE ELECTRÓNICO
-                            </xsl:when>  
+                            </xsl:when>
                             <xsl:when test="$tipo=33">
                                 FACTURA ELECTRÓNICA
-                            </xsl:when>                              
+                            </xsl:when>
                             <xsl:when test="$tipo=39">
                                 BOLETA ELECTRÓNICA
-                            </xsl:when>    
+                            </xsl:when>
                             <xsl:when test="$tipo=41">
                                 BOLETA EXENTA ELECTRÓNICA
-                            </xsl:when>    
+                            </xsl:when>
                             <xsl:when test="$tipo=46">
                                 FACTURA DE COMPRA ELECTRÓNICA
-                            </xsl:when> 
+                            </xsl:when>
                             <xsl:when test="$tipo=52">
                                 GUÍA DE DESPACHO ELECTRÓNICA
                             </xsl:when>
@@ -2218,34 +2242,34 @@
                             </xsl:when>
                             <xsl:when test="$tipo=112">
                                 NOTA DE CRÉDITO DE EXPORTACION ELECTRÓNICA
-                            </xsl:when>                     
+                            </xsl:when>
                             <xsl:otherwise>
                                 CORREGIR EN TEMPLATE XSL
                             </xsl:otherwise>
                         </xsl:choose>
                     </div>
-                               <br/> 
+                               <br/>
                     <div class="Folio">
                         N°
                         <xsl:value-of select="$folio" />
                     </div>
-                </div>       
-                
+                </div>
+
                 <div class="recuadroUnidadSII">
 
                     <div class="unidadSII">
                         S.I.I - var:unidad_regional
                     </div>
 
-                </div>                                    
-                
+                </div>
+
             </div>
-                                                                                                                                                                                    
+
         </div>
 
 
- 
-        <div style="clear:both;"></div>              
+
+        <div style="clear:both;"></div>
 
     </xsl:template>
 
@@ -2255,8 +2279,8 @@
         <xsl:param name="medioPago"/>
         <xsl:param name="formaPago"/>
         <xsl:param name="formaPagoExp"/>
-       
-        <div id="contenedorFechaEmision">                                
+
+        <div id="contenedorFechaEmision">
             <div id="fechaEmision">
                 Emisión:
                 <xsl:call-template name="FechaFormat">
@@ -2264,37 +2288,37 @@
                         <xsl:value-of select="$fecha" />
                     </xsl:with-param>
                 </xsl:call-template>
-                
-                <xsl:if test="/DTE/*[1]/Encabezado/IdDoc/FchVenc !=''"> 
+
+                <xsl:if test="/DTE/*[1]/Encabezado/IdDoc/FchVenc !=''">
                     Vencimiento:
                     <xsl:call-template name="FechaFormat">
                         <xsl:with-param name="fecha">
                             <xsl:value-of select="/DTE/*[1]/Encabezado/IdDoc/FchVenc" />
                         </xsl:with-param>
-                    </xsl:call-template>                      
+                    </xsl:call-template>
                 </xsl:if>
-                
-            </div> 
-        </div>                        
-                
-        <div id="contenedorReceptor">     
+
+            </div>
+        </div>
+
+        <div id="contenedorReceptor">
             <table style="width:100%;border:0.5pt solid black;" id="contenedorDReceptor">
-                       
+
                 <tbody>
-                    <tr> 
+                    <tr>
                         <td style="text-align:left; width:3cm;">
                             <span style="font-weight:bold;">
                                 SE&#209;OR(ES):
                             </span>
                         </td>
-                                                        
+
                         <td style="text-align:left; width:11.0cm;">
                             <span>
                                 <xsl:value-of select="RznSocRecep" />
                             </span>
                         </td>
-                                                        
-                        <td style="text-align=left; width:2.5cm;"> 
+
+                        <td style="text-align=left; width:2.5cm;">
                             <span style="font-weight:bold">
                                 R.U.T.:
                             </span>
@@ -2307,10 +2331,10 @@
                                     </xsl:with-param>
                                 </xsl:call-template>
                             </span>
-                        </td>                                                        
-                                                        
+                        </td>
+
                     </tr>
-                                                
+
                     <tr>
                         <td style="text-align:left; width:3cm;">
                             <span style="font-weight:bold;">
@@ -2319,9 +2343,9 @@
                         </td>
                         <td style="text-align:left; width:11.0cm;">
                             <xsl:value-of select="DirRecep" />
-                        </td>                                                    
+                        </td>
                         <td style="text-align:left; width:2.5cm;">
-                            <span style="font-weight:bold;">									
+                            <span style="font-weight:bold;">
                                 COMUNA:
                             </span>
                         </td>
@@ -2329,7 +2353,7 @@
                             <xsl:value-of select="CmnaRecep" />
                         </td>
                     </tr>
-                                                
+
                     <tr>
                         <td style="text-align:left; width:3cm;">
                             <span style="font-weight:bold;">
@@ -2340,13 +2364,13 @@
                             <xsl:value-of select="GiroRecep" />
                         </td>
                         <td style="text-align:left; width:2.5cm;">
-                            <span style="font-weight:bold;">									
+                            <span style="font-weight:bold;">
                                 CIUDAD:
                             </span>
                         </td>
                         <td style="text-align:left; width:2.5cm;">
                             <xsl:value-of select="CiudadRecep" />
-                        </td>                                                                       
+                        </td>
                     </tr>
 
             <xsl:if test="/DTE/*[1]/Encabezado/Receptor/Extranjero/Nacionalidad !=''">
@@ -2650,17 +2674,17 @@
                 </xsl:when>
             </xsl:choose>
 
-                   
-		<xsl:if test="/DTE/*[1]/Encabezado/IdDoc/IndTraslado !=''">	      
+
+		<xsl:if test="/DTE/*[1]/Encabezado/IdDoc/IndTraslado !=''">
                    <tr>
                         <td style="text-align:left; width:3cm;">
                             <span style="font-weight:bold;">
-                                TIPO TRASLADO 
+                                TIPO TRASLADO
                             </span>
                         </td>
                         <!--<td style="text-align:left; height:1cm;">-->
                         <td style="text-align:left; width:11.0cm;">
-						
+
                             <xsl:choose>
                                 <xsl:when test="/DTE/*[1]/Encabezado/IdDoc/IndTraslado=1">
                                     Operación constituye venta
@@ -2682,19 +2706,19 @@
                                 </xsl:when>
                                 <xsl:when test="/DTE/*[1]/Encabezado/IdDoc/IndTraslado=7">
                                     Guía de devolución
-                                </xsl:when>					
+                                </xsl:when>
                                 <xsl:when test="/DTE/*[1]/Encabezado/IdDoc/IndTraslado=8">
                                     Traslado para exportación. (no venta)
                                 </xsl:when>
                                 <xsl:when test="/DTE/*[1]/Encabezado/IdDoc/IndTraslado=9">
                                     Venta para exportación
-                                </xsl:when>											
+                                </xsl:when>
                                 <xsl:otherwise>
                                     CORREGIR EN TEMPLATE XSL
                                 </xsl:otherwise>
-                            </xsl:choose> 	
+                            </xsl:choose>
 
-                            <xsl:if test="/DTE/*[1]/Encabezado/IdDoc/TipoDespacho !=''">	
+                            <xsl:if test="/DTE/*[1]/Encabezado/IdDoc/TipoDespacho !=''">
                                 <br></br>
                                 <xsl:choose>
                                     <xsl:when test="/DTE/*[1]/Encabezado/IdDoc/TipoDespacho=1">
@@ -2705,24 +2729,24 @@
                                     </xsl:when>
                                     <xsl:when test="/DTE/*[1]/Encabezado/IdDoc/TipoDespacho=3">
                                        Despacho por cuenta del emisor a otras instalaciones (Ejemplo: entrega en Obra)
-                                    </xsl:when>											
+                                    </xsl:when>
                                     <xsl:otherwise>
                                         CORREGIR EN TEMPLATE XSL
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:if>
-										
-                        </td>                
+
+                        </td>
                         <td><span white-space-treatment="preserve">&#xa0;</span></td>
-                        <td><span white-space-treatment="preserve">&#xa0;</span></td> 
+                        <td><span white-space-treatment="preserve">&#xa0;</span></td>
                     </tr>
 		</xsl:if>
                 <xsl:if test="/DTE/*[1]/Encabezado/IdDoc/TipoDTE!=110 and /DTE/*[1]/Encabezado/IdDoc/TipoDTE!=111  and /DTE/*[1]/Encabezado/IdDoc/TipoDTE!=112">
                 <tr>
                     <td>
                         <span style="font-weight:bold;">
-                            MONTO TOTAL:                        
-                        </span>                        
+                            MONTO TOTAL:
+                        </span>
                     </td>
                     <td colspan="3">var:monto_letras</td>
                 </tr>
@@ -3463,15 +3487,15 @@
 
                 <xsl:choose>
                     <xsl:when test="/DTE/*[1]/Encabezado/Transporte/Chofer/RUTChofer != 'NaN'">
-                
+
                 <tr>
                     <td>
                         <span style="font-weight:bold;">
-                            CHOFER:                        
-                        </span>                        
+                            CHOFER:
+                        </span>
                     </td>
-                    <td><xsl:value-of select="/DTE/*[1]/Encabezado/Transporte/Chofer/NombreChofer" /> 
-                    (RUT 
+                    <td><xsl:value-of select="/DTE/*[1]/Encabezado/Transporte/Chofer/NombreChofer" />
+                    (RUT
                             <span>
                                 <xsl:call-template name="RutFormat">
                                     <xsl:with-param name="rut">
@@ -3482,26 +3506,26 @@
                     </td>
                     <td>
                         <span style="font-weight:bold;">
-                            PATENTE:                        
-                        </span>   
+                            PATENTE:
+                        </span>
                     </td>
-                        
+
                     <td>
                         <xsl:value-of select="/DTE/*[1]/Encabezado/Transporte/Patente" />
                     </td>
                 </tr>
-                
+
                     </xsl:when>
-                </xsl:choose>                            
+                </xsl:choose>
                 <tr>
                     <td>
                         <span style="font-weight:bold;">
-                            OBSERVACIONES:                        
-                        </span>                        
+                            OBSERVACIONES:
+                        </span>
                     </td>
                     <td colspan="3">var:observaciones_pdf</td>
                 </tr>
-						 
+
                 </tbody>
             </table>
 
@@ -3509,31 +3533,31 @@
     </xsl:template>
 
     <!-- Timbre electrónico -->
-    <xsl:template name="TED">    
+    <xsl:template name="TED">
         <div>
             <!-- 4CM ORIGINAL-->
             <img style="height:4cm;" src="var:barcode"/>
         </div>
         <div style="clear:both;"></div>
     </xsl:template>
-    
+
     <xsl:template name="Totales">
          <xsl:param name="montos_brutos">
             <xsl:value-of select="/DTE/*[1]/Encabezado/IdDoc/MntBruto"/>
         </xsl:param>
         <xsl:param name="montoTotal">
              <xsl:value-of select="/DTE/*[1]/Encabezado/Totales/MntTotal"/>
-        </xsl:param>         
+        </xsl:param>
         <xsl:param name="IVA">
              <xsl:value-of select="/DTE/*[1]/Encabezado/Totales/IVA"/>
-        </xsl:param>         
+        </xsl:param>
         <xsl:param name="netofinal">
              <xsl:value-of select="/DTE/*[1]/Encabezado/Totales/MntNeto"/>
-        </xsl:param> 
+        </xsl:param>
         <xsl:param name="exento">
              <xsl:value-of select="/DTE/*[1]/Encabezado/Totales/MntExe"/>
-        </xsl:param>  
-        
+        </xsl:param>
+
         <div style="width:5cm;float:right;padding-right:1cm;">
             <table id="totales" style="font-size:7pt; font-family:Arial,Helvetica;color:black; text-align:right;float:right;">
                 <tr>
@@ -3573,12 +3597,12 @@
                                     </span>
                                 </td>
                             </tr>
-                        </xsl:if> 
-                        
+                        </xsl:if>
+
                         <xsl:if test="TpoValor='$'">
                             <tr style="border-bottom:0.5pt solid black;">
                                 <td style="border-right:0.5pt solid black;border-bottom:0.5 solid black;border-left:0.5pt solid black;">
-                                    <span style="font-weight:bold;">	
+                                    <span style="font-weight:bold;">
                                         Desc. Bruto
                                     </span>
                                 </td>
@@ -3588,9 +3612,9 @@
                                     </span>
                                 </td>
                             </tr>
-                        </xsl:if>  
+                        </xsl:if>
                     </xsl:if>
-                    
+
                     <xsl:if test="$montos_brutos = 'NaN' or $montos_brutos = 0 or $montos_brutos = ''">
 
                         <xsl:choose>
@@ -3609,12 +3633,12 @@
                                             </span>
                                         </td>
                                     </tr>
-                                </xsl:if>		
+                                </xsl:if>
 
                                 <xsl:if test="TpoValor='$'">
                                     <tr style="border-bottom:0.5pt solid black;">
                                         <td style="border-right:0.5pt solid black;border-bottom:0.5 solid black;border-left:0.5pt solid black;">
-                                            <span style="font-weight:bold;">	
+                                            <span style="font-weight:bold;">
                                                 Desc. neto
                                             </span>
                                         </td>
@@ -3624,7 +3648,7 @@
                                             </span>
                                         </td>
                                     </tr>
-                                </xsl:if>												
+                                </xsl:if>
                             </xsl:when>
                             <xsl:when test="TpoMov='R'">
                                 <xsl:if test="TpoValor='%'">
@@ -3641,12 +3665,12 @@
                                             </span>
                                         </td>
                                     </tr>
-                                </xsl:if>		
+                                </xsl:if>
 
                                 <xsl:if test="TpoValor='$'">
                                     <tr style="border-bottom:0.5pt solid black;">
                                         <td style="border-right:0.5pt solid black;border-bottom:0.5 solid black;border-left:0.5pt solid black;">
-                                            <span style="font-weight:bold;">	
+                                            <span style="font-weight:bold;">
                                                 Rcg. neto
                                             </span>
                                         </td>
@@ -3656,7 +3680,7 @@
                                             </span>
                                         </td>
                                     </tr>
-                                </xsl:if>												
+                                </xsl:if>
                             </xsl:when>
                             <xsl:otherwise>
                                 CORREGIR EN TEMPLATE XSL
@@ -3664,12 +3688,12 @@
                         </xsl:choose>
 
                     </xsl:if>
-    
+
                 </xsl:for-each>
                 </xsl:if>
 
                 <xsl:if test="sum(/DTE/*[1]/Detalle/DescuentoMonto) != 0">
-                        <tr style="border-bottom:0.5pt solid black;">							
+                        <tr style="border-bottom:0.5pt solid black;">
                             <td style="border-right:0.5pt solid black;border-bottom:0.5 solid black;border-left:0.5pt solid black;">
                                 <span style="font-weight:bold;">
                                     Descuento
@@ -3681,7 +3705,7 @@
                                </span>
 
                             </td>
-                        </tr>  				
+                        </tr>
                 </xsl:if>
 
                 <xsl:if test="sum(/DTE/*[1]/Detalle/RecargoMonto) != 0">
@@ -3702,7 +3726,7 @@
 
                 <xsl:choose>
                     <xsl:when test="($netofinal!=0) and $netofinal != 'NaN' and $netofinal !=''">
-                        <tr style="border-bottom:0.5pt solid black;">							
+                        <tr style="border-bottom:0.5pt solid black;">
                             <td style="border-right:0.5pt solid black;border-bottom:0.5 solid black;border-left:0.5pt solid black;">
                                 <span style="font-weight:bold;">
                                     Neto
@@ -3714,10 +3738,10 @@
                                </span>
 
                             </td>
-                        </tr>                        
+                        </tr>
                     </xsl:when>
                 </xsl:choose>
-                
+
                 <xsl:choose>
                     <xsl:when test="($IVA!=0) and $IVA != 'NaN' and $IVA !=''">
                         <tr>
@@ -3733,8 +3757,8 @@
                             </td>
                         </tr>
                     </xsl:when>
-                </xsl:choose> 
-                
+                </xsl:choose>
+
                 <xsl:choose>
                     <xsl:when test="($exento!=0) and $exento != 'NaN' and $exento !=''">
                         <tr>
@@ -3747,10 +3771,10 @@
                                 <span style="font-weight:bold;">
                                     <xsl:value-of select='format-number($exento, "#.###,##", "chilean")'/>
                                 </span>
-                            </td>        
+                            </td>
                         </tr>
                     </xsl:when>
-                </xsl:choose>      
+                </xsl:choose>
 
                 <xsl:if test="sum(/DTE/*[1]/Encabezado/Totales/ImptoReten/MontoImp) != 0">
                     <tr>
@@ -3758,22 +3782,22 @@
                             <xsl:choose>
                                 <xsl:when test="/DTE/*[1]/Encabezado/IdDoc/TipoDTE=46 or (/DTE/*[1]/Encabezado/Totales/ImptoReten[1]/TipoImp != 'NaN' and /DTE/*[1]/Encabezado/Totales/ImptoReten[1]/TipoImp =15)">
                                     <span style="font-weight:bold;">IVA Retenido(19%)</span>
-                                </xsl:when>                            
+                                </xsl:when>
                                 <xsl:otherwise>
                                     <span style="font-weight:bold;">Adicional</span>
                                 </xsl:otherwise>
                             </xsl:choose>
-                            
+
                         </td>
-                        
+
                         <td style="border-right:0.5pt solid black;border-bottom:0.5pt solid black;text-align:right;">
                             <span style="font-weight:bold;">
                                 <xsl:value-of select='format-number(sum(/DTE/*[1]/Encabezado/Totales/ImptoReten/MontoImp), "#.###,##", "chilean")' />
                             </span>
                         </td>
-                    </tr> 
-                </xsl:if>                
-                                                
+                    </tr>
+                </xsl:if>
+
                 <tr>
                     <td style="border-right:0.5pt solid black;border-bottom:0.5 solid black;border-left:0.5pt solid black;">
                         <span style="font-weight:bold;">
@@ -3782,11 +3806,11 @@
                     </td>
                     <td style="border-right:0.5pt solid black;border-bottom:0.5pt solid black;text-align:right;">
                         <span style="font-weight:bold;">
-                            <xsl:value-of select='format-number($montoTotal, "#.###,##", "chilean")'/>                       
+                            <xsl:value-of select='format-number($montoTotal, "#.###,##", "chilean")'/>
                         </span>
                     </td>
-                </tr> 
-            </table>         
+                </tr>
+            </table>
         </div>
     </xsl:template>
 
@@ -3907,8 +3931,8 @@
             </td>
             <td class="itemsVacio">
                 <span white-space-treatment="preserve">&#xa0;</span>
-            </td>                        
+            </td>
         </tr>
-    </xsl:template> 
-    
+    </xsl:template>
+
 </xsl:stylesheet>

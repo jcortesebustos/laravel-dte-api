@@ -9,7 +9,7 @@
 
     <xsl:template match="/">
         <div class="hojaCarta" id="hoja1">
-        <xsl:apply-templates select="DTE/*[1]" />
+            <xsl:apply-templates select="DTE/*[1]" />
 
 
             <div class="ted">
@@ -24,6 +24,29 @@
                     Res. var:numero_resolucion de var:ano_resolucion - Verifique Documento: var:web_verificacion
                 </span>
                 </div>
+            </div>
+
+            <div>
+                LEY DE SUBVENCIONES D.F.L. Nº2 DE 1998, DEL MINISTERIO DE EDUCACIÓN
+                Artículo 24: Los Establecimientos Educacionales de Financiamiento Compartido podrán efectuar cobros mensuales por alumno no mayores de 4 U.S.E. Para los efectos de
+                este título se entenderá por cobro mensual promedio el valor que resulte de aplicar el artículo 34º de la presente ley. Los cobros que efectúen los establecimientos
+                educacionales de Financiamiento Compartido solo podrán ser los comunicados conforme al inciso del artículo 26, los que deberán constar en recibos timbrados por el Servicio
+                de Impuestos Internos y serán compatibles con otros cobros, obligatorios para los padres y apoderados, cualquiera sea su denominación y finalidad.
+                Artículo 26: Simultáneamente deberá informar el respecto mediante comunicación escrita a los padres y apoderados, dándoles a conocer también junto con la propuesta
+                educativa, el sistema de exenciones de cobro a que se refiera el artículo 24 y una indicación precisa del monto inicial de cobro y el máximo de reajustabilidad por sobre el Índice
+                de Precios al Consumidor (I.P.C.) o de la variación de la unidad de subvención educacional (U.S.E.) que se aplicará durante los tres años siguientes. Asimismo, a partir del año
+                de vigencia del cobro inicial, el sostenedor podrá fijar el valor del cobro del nuevo trienio, pero deberá respectar el sistema de reajustabilidad ya determinado para los dos
+                primeros años. En ningún caso podrá modificar lo informado para ese período.
+                Se deberá comunicar a la Secretaría Regional Ministerial respectiva los montos de cobros anuales, antes del 30 de octubre de cada año. El establecimiento deberá informar
+                anualmente a la comunidad, con copia al Ministerio de Educación, sobre la forma en que utilizaron los recursos, el avance del proyecto educativo y su contribución al
+                mejoramiento de la calidad de la educación, pudiendo los padres y apoderados, en todo momento formular ideas y proposiciones al respecto. La comunicación al Ministerio de
+                Educación sólo tendrá por objeto acreditar el cumplimiento de esta obligación.
+                Artículo 62: Inciso primero, DSE Nº755/97: Entre los meses de noviembre de un año y marzo del siguiente, el sostenedor deberá determinar los beneficios de exenciones de
+                pago y su correspondiente monto de exención, en concordancia con el reglamento interno y sus proyecciones de ingreso y asistencia media. El establecimiento educacional de
+                financiamiento compartido deberá comunicar los montos de exención de pago de arancel a los padres y apoderados de los alumnos beneficiados con el sistema, para los cuales
+                la exención deberá mantenerse en los mismos términos, a lo menos, hasta el término del año escolar respectivo.
+                Artículo 62, inciso quinto, DSE Nº755/97: La aplicación del sistema de becas se efectuará en los establecimientos educacionales de educación media del sector municipal, sin
+                perjuicio del beneficio de gratuidad establecido en el inciso final del artículo 23 del decreto con fuerza de ley Nº2, de Educación, de 1998.
             </div>
         </div>
         <!-- FINAL HOJA 1 -->
