@@ -29,7 +29,7 @@
         </div>
 
         <xsl:if test="/DTE/*[1]/Encabezado/IdDoc/TipoDTE = '41'">
-            <div>
+            <div style="padding-top:1cm;padding-left:1cm;padding-right:1cm;width: 100%">
                 LEY DE SUBVENCIONES D.F.L. Nº2 DE 1998, DEL MINISTERIO DE EDUCACIÓN
                 Artículo 24: Los Establecimientos Educacionales de Financiamiento Compartido podrán efectuar cobros mensuales por alumno no mayores de 4 U.S.E. Para los efectos de
                 este título se entenderá por cobro mensual promedio el valor que resulte de aplicar el artículo 34º de la presente ley. Los cobros que efectúen los establecimientos
