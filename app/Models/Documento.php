@@ -394,6 +394,10 @@ class Documento extends Model
                         $value = (int) round($value);
                     }
 
+                    if($this->idDoc->TipoDTE == 34 && in_array($index, ['TasaIVA', 'MntNeto', 'IVA'])){
+                        continue;
+                    }
+
                     $dte_documento->getEncabezado()->getTotales()->$set((string) $value);
                 }
             }
@@ -1014,46 +1018,48 @@ class Documento extends Model
         return false;
     }
 
-    public function consultarEstadoSii()
+    public function consultarEstadoSii($token = false)
     {
         /* @var CertificadoEmpresa $certificado  */
         $certificado = $this->empresa->certificados()->where('enUso', 1)->first();
         $siiComponent = new Sii($this->empresa);
 
-        $documento = [
-            'rut_emisor' => $this->emisor->RUTEmisor,
-            'rut_receptor' => $this->receptor->RUTRecep,
-            'rut_consultante' => $certificado->rut,
-            'tipo' => $this->idDoc->TipoDTE,
-            'folio' => (string) $this->idDoc->Folio,
-            'fecha_emision' => $this->idDoc->FchEmis->format('dmY'),
-            'fecha_emision_boleta' => $this->idDoc->FchEmis->format('d-m-Y'),
-            'monto' => (string) $this->totales->MntTotal
-        ];
+        if($this->glosaEstadoSii != 'DTE Recibido'){
+            $documento = [
+                'rut_emisor' => $this->emisor->RUTEmisor,
+                'rut_receptor' => $this->receptor->RUTRecep,
+                'rut_consultante' => $certificado->rut,
+                'tipo' => $this->idDoc->TipoDTE,
+                'folio' => (string) $this->idDoc->Folio,
+                'fecha_emision' => $this->idDoc->FchEmis->format('dmY'),
+                'fecha_emision_boleta' => $this->idDoc->FchEmis->format('d-m-Y'),
+                'monto' => (string) $this->totales->MntTotal
+            ];
 
-        $data = $siiComponent->consultarEstadoDte($documento);
+            $data = $siiComponent->consultarEstadoDte($documento, $token);
 
-        if(!in_array($this->idDoc->TipoDTE, [39,41])){
-            $formato = str_replace('SII:', '', $data );
-            $xml = simplexml_load_string($formato);
-            $this->estadoSii = $xml->RESP_HDR->ESTADO;
-            $this->glosaEstadoSii = $xml->RESP_HDR->GLOSA_ESTADO;
-            $this->errCode = $xml->RESP_HDR->ERR_CODE;
-            $this->glosaErrSii = $xml->RESP_HDR->GLOSA_ERR;
-            $this->save();
-        }else{
-            if(strpos($data->descripcion, "Documento Recibido por el SII") === false){
-                $this->glosaEstadoSii = 'DTE NoRecibido';
+            if(!in_array($this->idDoc->TipoDTE, [39,41])){
+                $formato = str_replace('SII:', '', $data );
+                $xml = simplexml_load_string($formato);
+                $this->estadoSii = $xml->RESP_HDR->ESTADO;
+                $this->glosaEstadoSii = $xml->RESP_HDR->GLOSA_ESTADO;
+                $this->errCode = $xml->RESP_HDR->ERR_CODE;
+                $this->glosaErrSii = $xml->RESP_HDR->GLOSA_ERR;
+                $this->save();
             }else{
-                $this->glosaEstadoSii = 'DTE Recibido';
+                if(strpos($data->descripcion, "Documento Recibido por el SII") === false){
+                    $this->glosaEstadoSii = 'DTE No Recibido';
+                }else{
+                    $this->glosaEstadoSii = 'DTE Recibido';
+                }
+
+                $this->estadoSii = $data->codigo;
+                $this->glosaErrSii = $data->descripcion;
+                $this->save();
             }
 
-            $this->estadoSii = $data->codigo;
-            $this->glosaErrSii = $data->descripcion;
-            $this->save();
+            Log::info('Documento con ID: ' . $this->id . ' actualizado con estado:' . $this->glosaEstadoSii);
         }
-
-        Log::info('Documento con ID: ' . $this->id . ' actualizado con estado:' . $this->glosaEstadoSii);
     }
 
 }

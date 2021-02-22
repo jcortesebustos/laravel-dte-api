@@ -2,26 +2,27 @@
 
 namespace App\Jobs;
 
-use App\Models\EnvioDte;
+use App\Components\Xml;
+use App\Models\SII\ConsumoFolios\FolioConsumption;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SubirEnvioDteSii implements ShouldQueue
+class GuardarResultadoConsumoFolios implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    public $envio_dte_id;
+    private $xml_string;
 
     /**
      * Create a new job instance.
      *
-     * @param $envio_id
+     * @param $xml
      */
-    public function __construct($envio_id)
+    public function __construct($xml)
     {
-        $this->envio_dte_id = $envio_id;
+        $this->xml_string = $xml;
     }
 
     /**
@@ -31,11 +32,9 @@ class SubirEnvioDteSii implements ShouldQueue
      */
     public function handle()
     {
-        /* @var EnvioDte $envio */
-        $envio = EnvioDte::find($this->envio_dte_id);
-
-        if($envio !== null){
-            $envio->subirAllSii();
-        }
+        $xml = new \DOMDocument();
+        $xml->loadXML(utf8_decode($this->xml_string));
+        $consumoFolios = Xml::parseResultadoConsumoFolios($xml);
+        FolioConsumption::saveResponse($consumoFolios);
     }
 }

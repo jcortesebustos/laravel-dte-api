@@ -9,19 +9,19 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SubirEnvioDteSii implements ShouldQueue
+class ConsultarEstadoEnvioSii implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    public $envio_dte_id;
+    private $id;
 
     /**
      * Create a new job instance.
      *
-     * @param $envio_id
+     * @param $id
      */
-    public function __construct($envio_id)
+    public function __construct($id)
     {
-        $this->envio_dte_id = $envio_id;
+        $this->id = $id;
     }
 
     /**
@@ -32,10 +32,9 @@ class SubirEnvioDteSii implements ShouldQueue
     public function handle()
     {
         /* @var EnvioDte $envio */
-        $envio = EnvioDte::find($this->envio_dte_id);
-
-        if($envio !== null){
-            $envio->subirAllSii();
-        }
+        echo "Consultando Estado Envio " . $this->id . "\n";
+        $envio = EnvioDte::find($this->id);
+        $envio->consultarEstadoSii();
+        echo "Consulta Estado Envio " . $this->id . " Terminada \n";
     }
 }

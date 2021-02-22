@@ -936,8 +936,6 @@ class Sii
         $boundary = '--7d23e2a11301c4';
         $cuerpo = $this->multipart_build_query($data, $boundary, $xml_string, $file->file_name);
 
-        $url = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::UploadProduccion : self::UploadCertificacion;
-
         /* @var $file File*/
         for ($i = 0; $i < $this->reintentos; $i++) {
             $tokenSII = $this->obtenerToken();
@@ -1320,18 +1318,19 @@ class Sii
         }
     }
 
-    public function consultarEstadoDte($documento){
+    public function consultarEstadoDte($documento, $tokenSII = false){
 
         $boleta = 0;
         if($documento['tipo'] == 39 || $documento['tipo'] == 41){
             $boleta = 1;
         }
 
-        $tokenSII = false;
-        for ($i = 0; $i < $this->reintentos; $i++) {
-            $tokenSII = $this->obtenerToken($boleta);
-            if ($tokenSII !== false) {
-                break;
+        if($tokenSII === false){
+            for ($i = 0; $i < $this->reintentos; $i++) {
+                $tokenSII = $this->obtenerToken($boleta);
+                if ($tokenSII !== false) {
+                    break;
+                }
             }
         }
 
@@ -1407,5 +1406,41 @@ class Sii
         }
 
         return $response;
+    }
+
+    public function consultarEstadoEnvio($envio, $tokenSII = false){
+
+        if($tokenSII === false){
+            for ($i = 0; $i < $this->reintentos; $i++) {
+                $tokenSII = $this->obtenerToken($envio['boleta']);
+                if ($tokenSII !== false) {
+                    break;
+                }
+            }
+        }
+
+        if ($tokenSII === false) {
+            return false;
+        }
+
+        $array_rut_emisor = self::getRutArray($envio['rut_emisor']);
+
+        if($envio['boleta'] == 0){
+            return false;
+        }else{
+
+            $url_base = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::ApiBoletaProduccion : self::ApiBoletaCertificacion;
+            $client = new \GuzzleHttp\Client();
+            $url = "{$url_base}.envio/{$array_rut_emisor['number']}-{$array_rut_emisor['dv']}-{$envio['trackId']}";
+            $request = $client->get($url, [
+                'headers' => [
+                    'User-Agent' => self::USER_AGENT,
+                    'Accept' => 'application/json',
+                    'Cookie' => "TOKEN={$tokenSII}",
+                ]
+            ]);
+            $contents = json_decode($request->getBody()->getContents());
+            return $contents;
+        }
     }
 }
