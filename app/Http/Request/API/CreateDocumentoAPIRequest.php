@@ -102,6 +102,7 @@ class CreateDocumentoAPIRequest extends APIRequest
             'detalle.*.IndExe' => 'nullable|integer|between:0,6',
             'detalle.*.QtyItem' => 'nullable|numeric|required_with:detalle.*.PrcItem',
             'detalle.*.PrcItem' => 'nullable|numeric|required_with:detalle.*.QtyItem',
+            'detalle.*.DscItem' => 'nullable|sometimes|string|max:500',
             'detalle.*.DescuentoPct' => 'nullable|numeric|max:100',
             'detalle.*.DescuentoMonto' => 'nullable|numeric|required_with:detalle.*.DescuentoPct',
             'detalle.*.RecargoPct' => 'nullable|numeric|max:100',
@@ -209,7 +210,7 @@ class CreateDocumentoAPIRequest extends APIRequest
                     $descuentoMonto = isset($value['DescuentoMonto']) ? $value['DescuentoMonto'] : 0;
                     $recargoMonto = isset($value['RecargoMonto']) ? $value['RecargoMonto'] : 0;
 
-                    $montoItem = ($qtyItem * $prcItem) - $descuentoMonto + $recargoMonto;
+                    $montoItem = round(($qtyItem * $prcItem) - $descuentoMonto + $recargoMonto);
 
                     isset($value['IndExe']) && $value['IndExe'] == 1 ? $this->monto_exento += $value['MontoItem'] : $this->monto_neto += $value['MontoItem'];
                     isset($value['IndExe']) && $value['IndExe'] == 1 ? $this->ind_exe_count++ : null;
@@ -244,7 +245,7 @@ class CreateDocumentoAPIRequest extends APIRequest
             }else{
                 foreach ($data['dscRcgGlobal'] as $index => $value) {
                     if (count($data['dscRcgGlobal'][$index]) == 0) {
-                        $validator->errors()->add('detalles.'.$index, 'las lineas de detalle no pueden ser vacias');
+                        $validator->errors()->add('dscRcgGlobal.'.$index, 'las lineas de DscRcg no pueden ser vacias');
                     }
 
                     if (isset($value['NroLinDR']) && $value['NroLinDR'] != $lin_dscrcg) {
@@ -254,7 +255,7 @@ class CreateDocumentoAPIRequest extends APIRequest
                     $valorDR = isset($value['ValorDR']) ? $value['ValorDR'] : 0;
 
                     if (isset($value['TpoMov']) && $value['TpoMov'] == 'D' && ! isset($value['IndExeDR'])) {
-                        if (isset($value['TpoValaor']) && $value['TpoValor'] == '%') {
+                        if (isset($value['TpoValor']) && $value['TpoValor'] == '%') {
                             $this->monto_neto -= $this->monto_neto * ($valorDR / 100);
                         }
 
@@ -264,7 +265,7 @@ class CreateDocumentoAPIRequest extends APIRequest
                     }
 
                     if (isset($value['TpoMov']) && $value['TpoMov'] == 'D' && isset($value['IndExeDR']) && $value['IndExeDR'] == 1) {
-                        if (isset($value['TpoValaor']) && $value['TpoValor'] == '%') {
+                        if (isset($value['TpoValor']) && $value['TpoValor'] == '%') {
                             $this->monto_exento -= $this->monto_exento * ($valorDR / 100);
                         }
 
@@ -274,7 +275,7 @@ class CreateDocumentoAPIRequest extends APIRequest
                     }
 
                     if (isset($value['TpoMov']) && $value['TpoMov'] == 'R' && ! isset($value['IndExeDR'])) {
-                        if (isset($value['TpoValaor']) && $value['TpoValor'] == '%') {
+                        if (isset($value['TpoValor']) && $value['TpoValor'] == '%') {
                             $this->monto_neto += $this->monto_neto * ($valorDR / 100);
                         }
 
@@ -284,7 +285,7 @@ class CreateDocumentoAPIRequest extends APIRequest
                     }
 
                     if (isset($value['TpoMov']) && $value['TpoMov'] == 'R' && isset($value['IndExeDR']) && $value['IndExeDR'] == 1) {
-                        if (isset($value['TpoValaor']) && $value['TpoValor'] == '%') {
+                        if (isset($value['TpoValor']) && $value['TpoValor'] == '%') {
                             $this->monto_exento += $this->monto_exento * ($valorDR / 100);
                         }
 
@@ -479,11 +480,14 @@ class CreateDocumentoAPIRequest extends APIRequest
         $validator->after(function (Validator $validator) {
             $data = $validator->getData();
 
+            if(config('dte.amount_validator') == true){
+                $this->validarDetalle($data, $validator);
+                $this->validarDscRcg($data, $validator);
+                $this->validarTotales($data, $validator);
+            }
+
             $this->validarTipoDocumento($validator);
-            $this->validarDetalle($data, $validator);
-            $this->validarDscRcg($data, $validator);
             $this->validarRreferencia($data, $validator);
-            $this->validarTotales($data, $validator);
             $this->validarActividadesEconomicas($validator);
         });
     }
