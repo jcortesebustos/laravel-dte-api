@@ -249,6 +249,14 @@ class Pdf
             $html = str_replace('var:logo2', '-->', $html);
         }
 
+        if(isset($data['school_with_text']) && $data['school_with_text'] !== false){
+            $html = str_replace('var:school_with_text1', '', $html);
+            $html = str_replace('var:school_with_text2', '', $html);
+        }else{
+            $html = str_replace('var:school_with_text1', '<!--', $html);
+            $html = str_replace('var:school_with_text2', '-->', $html);
+        }
+
         $html = str_replace('var:sucursales', $data['sucursales'], $html);
         $html = str_replace('var:unidad_regional', $direccion_regional, $html);
         $html = str_replace('var:barcode', 'data:image/png;base64,'.base64_encode($pdf417html), $html);

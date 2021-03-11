@@ -771,6 +771,7 @@ class Documento extends Model
             'TipoDTE' => $this->idDoc->TipoDTE,
             'observaciones' => $this->observaciones,
             'logo' => $this->empresa->logo_id ? Storage::cloud()->temporaryUrl($this->empresa->logo->file_path, Carbon::now()->addMinutes(1)): null,
+            'school_with_text' => $this->empresa->school_with_text
         ];
 
         return $data;

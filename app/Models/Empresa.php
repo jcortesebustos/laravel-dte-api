@@ -35,6 +35,7 @@ use Spiritix\LadaCache\Database\LadaCacheTrait;
  * @property string contactoEmpresas
  * @property string passwordContactoEmpresas
  * @property string servidorSmtp
+ * @property boolean school_with_text
  * @property date fechaResolucion
  * @property int numeroResolucion
  * @property date fechaResolucionBoleta
@@ -84,6 +85,7 @@ class Empresa extends Model implements TenantContract
         'esEmisor',
         'esReceptor',
         'reglasNegocio',
+        'school_with_text',
     ];
 
     /**
@@ -113,6 +115,7 @@ class Empresa extends Model implements TenantContract
         'esEmisor' => 'integer',
         'esReceptor' => 'integer',
         'reglasNegocio' => 'integer',
+        'school_with_text' => 'boolean',
     ];
 
     /**
@@ -137,6 +140,7 @@ class Empresa extends Model implements TenantContract
         'numeroResolucion' => 'integer',
         'fechaResolucionBoleta' => 'date',
         'numeroResolucionBoleta' => 'integer',
+        'school_with_text' => 'sometimes|boolean',
     ];
 
     /**

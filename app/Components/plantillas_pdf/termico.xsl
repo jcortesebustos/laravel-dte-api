@@ -27,6 +27,7 @@
             </div>
 
             <xsl:if test="/DTE/*[1]/Encabezado/IdDoc/TipoDTE = '41'">
+                var:school_with_text1
                 <div>
                     LEY DE SUBVENCIONES D.F.L. Nº2 DE 1998, DEL MINISTERIO DE EDUCACIÓN
                     Artículo 24: Los Establecimientos Educacionales de Financiamiento Compartido podrán efectuar cobros mensuales por alumno no mayores de 4 U.S.E. Para los efectos de
@@ -49,6 +50,7 @@
                     Artículo 62, inciso quinto, DSE Nº755/97: La aplicación del sistema de becas se efectuará en los establecimientos educacionales de educación media del sector municipal, sin
                     perjuicio del beneficio de gratuidad establecido en el inciso final del artículo 23 del decreto con fuerza de ley Nº2, de Educación, de 1998.
                 </div>
+                var:school_with_text2
             </xsl:if>
         </div>
         <!-- FINAL HOJA 1 -->
