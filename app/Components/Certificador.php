@@ -387,6 +387,7 @@ class Certificador
         EnviarEnvioDteAlReceptor::dispatch($email_id);
     }
 
+
     public function crearBoleta($input, $fecha, $company)
     {
         /* @var Documento $documento */
