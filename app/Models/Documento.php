@@ -856,7 +856,9 @@ class Documento extends Model
         $documentos = self::where('empresa_id', $empresa_id)
             ->where('IO', 0)
             ->where(function($query){
-                $query->where('glosaEstadoSii', '<>', 'DTE Recibido')->orWhereNull('glosaEstadoSii')
+                $query->where(function($query3){
+                    $query3->where('glosaEstadoSii', '<>', 'DTE Recibido')->where('glosaErrSii', '<>', 'Documento Anulado');
+                })->orWhereNull('glosaEstadoSii')
                     ->orWhereRaw('DATE(created_at) >= DATE_ADD(CURDATE(), INTERVAL -6 MINUTE)');
              })
             ->where(function($query2){
@@ -1030,7 +1032,7 @@ class Documento extends Model
         return false;
     }
 
-    public function consultarEstadoSii($token = false)
+    public function consultarEstadoSii($token = false, $return = false)
     {
         /* @var CertificadoEmpresa $certificado  */
         $certificado = $this->empresa->certificados()->where('enUso', 1)->first();
@@ -1068,6 +1070,10 @@ class Documento extends Model
                 $this->estadoSii = $data->codigo;
                 $this->glosaErrSii = $data->descripcion;
                 $this->save();
+            }
+
+            if($return){
+                return $data;
             }
 
             Log::info('Documento con ID: ' . $this->id . ' actualizado con estado:' . $this->glosaEstadoSii);
