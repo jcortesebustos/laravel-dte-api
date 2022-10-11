@@ -371,7 +371,23 @@ class DocumentoAPIController extends AppBaseController
         if($empresa_id !== $documento->empresa_id){
             return $this->sendError('Documento no encontrado');
         }
-        
-        return $this->sendResponse(['data' => $documento->consultarEstadoSii(null, true)], '');
+
+        $data = $documento->consultarEstadoSii(false, true, true);
+
+        return $this->sendResponse(['data' => $data], '');
+    }
+
+    public function enviarAlSii(APIRequest $request, Documento $documento, $empresa_id)
+    {
+        if($empresa_id !== $documento->empresa_id){
+            return $this->sendError('Documento no encontrado');
+        }
+
+        if($documento->glosaEstadoSii !== 'DTE Recibido'){
+            ProcesarEnvioDte::dispatch($documento->id);
+            return $this->sendResponse(['data' => null], 'Documento enviado a cola de envios');
+        }else{
+            return $this->sendError('El DTE no sera enviado, ya tiene estado "DTE Recibido"');
+        }
     }
 }
