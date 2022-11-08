@@ -366,7 +366,7 @@ class DocumentoAPIController extends AppBaseController
         }
     }
 
-    public function consultarEstadoSii($empresa_id, Documento $documento)
+    public function consultarEstadoSii(Documento $documento, $empresa_id)
     {
         if($empresa_id !== $documento->empresa_id){
             return $this->sendError('Documento no encontrado');
