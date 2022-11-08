@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Models\EnvioDte;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Response;
@@ -366,9 +367,21 @@ class DocumentoAPIController extends AppBaseController
         }
     }
 
+    public function consultarEstadoEnvioSii(Documento $documento, $empresa_id)
+    {
+        if($empresa_id != $documento->empresa_id){
+            return $this->sendError('Documento no encontrado');
+        }
+
+        /* @var EnvioDte $envio */
+        $envio = $documento->envios()->latest()->first();
+        $data = $envio->consultarEstadoSii(false, true, false);
+        return $this->sendResponse(['data' => $data], '');
+    }
+
     public function consultarEstadoSii(Documento $documento, $empresa_id)
     {
-        if($empresa_id !== $documento->empresa_id){
+        if($empresa_id != $documento->empresa_id){
             return $this->sendError('Documento no encontrado');
         }
 
