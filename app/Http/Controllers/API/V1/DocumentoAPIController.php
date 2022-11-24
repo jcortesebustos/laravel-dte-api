@@ -392,7 +392,7 @@ class DocumentoAPIController extends AppBaseController
 
     public function enviarAlSii(APIRequest $request, Documento $documento, $empresa_id)
     {
-        if($empresa_id !== $documento->empresa_id){
+        if($empresa_id != $documento->empresa_id){
             return $this->sendError('Documento no encontrado');
         }
 
