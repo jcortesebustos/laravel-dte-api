@@ -2,7 +2,7 @@
 
 
 # Configuración del Sistema
-Correos Electrónicos
+# Correos Electrónicos
 DTE_CRON_MAIL: Correo para notificaciones del cron del sistema: certificaciondte@dsmpagos.com
 DTE_MAIL_RECEPTION_USERNAME: Usuario del correo para la recepción de mensajes: mail@example.cl
 DTE_MAIL_RECEPTION_PASSWORD: Contraseña del correo para la recepción de mensajes.
