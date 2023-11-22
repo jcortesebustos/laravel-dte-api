@@ -21,5 +21,5 @@ DTE_MAX_QUANTITY_PACKING: Cantidad máxima de boletas por lote para el envío al
 DTE_AMOUN_VALIDATOR: Habilita o deshabilita la capa de validación para montos en los documentos enviados. Ajusta automáticamente pequeñas diferencias (±$1) en los valores. Puede ser "true" o "false".  
 ## Detalles Adicionales
 El sistema puede crear la información de una empresa solo con el certificado del representante, extrayendo datos como la dirección desde el SII.  
-El correo configurado en DTE_CERTIFICATION_EMAIL recibirá los archivos de certificación de boletas generados por el sistema.  
-El correo DTE_CRON_MAIL se utiliza para recibir alertas del sistema, como notificaciones sobre la falta de certificados en una empresa u otros eventos importantes.  
+DTE_CERTIFICATION_EMAIL: El correo configurado recibirá los archivos de certificación de boletas generados por el sistema.  
+DTE_CRON_MAIL: El correo se utiliza para recibir alertas del sistema, como notificaciones sobre la falta de certificados en una empresa u otros eventos importantes.  
