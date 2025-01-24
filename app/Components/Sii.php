@@ -69,9 +69,9 @@ class Sii
     const URL_CONFIRMA_FOLIO_PRODUCCION = "https://palena.sii.cl/cvc_cgi/dte/of_confirma_folio";
     const URL_CONFIRMA_FOLIO_CERTIFICACION = "https://maullin.sii.cl/cvc_cgi/dte/of_confirma_folio";
     const URL_GENERA_FOLIO_PRODUCCION = "https://palena.sii.cl/cvc_cgi/dte/of_genera_folio";
-    const URL_GENERA_FOLIO_CERTIFICACION ="https://maullin.sii.cl/cvc_cgi/dte/of_genera_folio";
+    const URL_GENERA_FOLIO_CERTIFICACION = "https://maullin.sii.cl/cvc_cgi/dte/of_genera_folio";
     const URL_GENERA_ARCHIVO_PRODUCCION = "https://palena.sii.cl/cvc_cgi/dte/of_genera_archivo";
-    const URL_GENERA_ARCHIVO_CERTIFICACION ="https://maullin.sii.cl/cvc_cgi/dte/of_genera_archivo";
+    const URL_GENERA_ARCHIVO_CERTIFICACION = "https://maullin.sii.cl/cvc_cgi/dte/of_genera_archivo";
 
     /** @var Empresa */
     private $empresa;
@@ -430,7 +430,7 @@ class Sii
 
     public function __construct(Empresa $empresa = null)
     {
-        if($empresa !== null){
+        if ($empresa !== null) {
             $this->empresa = $empresa;
         }
 
@@ -466,7 +466,7 @@ class Sii
         } else {
             throw new HttpResponseException(response()->json([
                 'message' => '422 error',
-                'errors' => ['empresa_id'=>['La empresa no fue encontrada']],
+                'errors' => ['empresa_id' => ['La empresa no fue encontrada']],
                 'status_code' => 422,
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
         }
@@ -475,13 +475,13 @@ class Sii
     public function throwException($mensaje)
     {
         if ($this->runningInConsole) {
-            echo $mensaje."\n";
+            echo $mensaje . "\n";
             Log::error($mensaje);
-        //exit();
+            //exit();
         } else {
             throw new HttpResponseException(response()->json([
                 'message' => '422 error',
-                'errors' => ['mensaje'=>[$mensaje]],
+                'errors' => ['mensaje' => [$mensaje]],
                 'status_code' => 422,
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
         }
@@ -517,7 +517,7 @@ class Sii
 
         $dom = $this->firmarSemilla($semilla);
 
-        if($boleta == 0){
+        if ($boleta == 0) {
             $wsdl_token = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::TokenProduccion : self::TokenCertificacion;
             $body_token = null;
             for ($i = 0; $i < $this->reintentos; $i++) {
@@ -531,10 +531,11 @@ class Sii
                     usleep(200000);
                 }
             }
-        }else{
+        } else {
             $client = new \GuzzleHttp\Client();
             $url = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::TokenBoletaProduccion : self::TokenBoletaCertificacion;
-            $response = $client->post($url,
+            $response = $client->post(
+                $url,
                 [
                     'body' => $dom->saveXML(),
                     'headers' => [
@@ -542,7 +543,8 @@ class Sii
                         'User-Agent' => self::USER_AGENT,
                         'Accept' => 'application/xml',
                     ]
-                ]);
+                ]
+            );
             $body_token = $response->getBody()->getContents();
         }
 
@@ -567,7 +569,7 @@ class Sii
             self::throwExceptionEmpresaNoEncontrada();
         }
 
-        if($boleta == 0){
+        if ($boleta == 0) {
             $wsdl_semilla = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::SemillaProduccion : self::SemillaCertificacion;
 
             for ($i = 0; $i < $this->reintentos; $i++) {
@@ -587,17 +589,19 @@ class Sii
                 Log::error('Existio un error al intentar conectar con el SII - Semilla');
                 return false;
             }
-        }else{
+        } else {
             $client = new \GuzzleHttp\Client();
             $url = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::SemillaBoletaProduccion : self::SemillaBoletaCertificacion;
 
-            $response = $client->get($url,
+            $response = $client->get(
+                $url,
                 [
                     'headers' => [
                         'User-Agent' => self::USER_AGENT,
                         'Accept' => 'application/xml',
                     ]
-                ]);
+                ]
+            );
             $body = $response->getBody()->getContents();
         }
 
@@ -607,7 +611,7 @@ class Sii
         $estado = $seedXML->getElementsByTagName('ESTADO')->item(0)->nodeValue;
 
         if ($estado !== '00') {
-            Log::error('Error al obtener semilla estado: '.$estado);
+            Log::error('Error al obtener semilla estado: ' . $estado);
 
             return false;
         }
@@ -619,18 +623,23 @@ class Sii
     {
         try {
             $client = new \GuzzleHttp\Client();
-            $response = $client->get('https://hercules.sii.cl/cgi_AUT2000/autInicio.cgi?referencia=https://misiir.sii.cl/cgi_misii/siihome.cgi',
-                ['headers' => [
-                    'User-Agent' => self::USER_AGENT,
-                    'Accept' => '*/*',
-                    'Connection' => 'keep-alive',
-                ],
+            $urlSesionNueva = 'https://zeusr.sii.cl/AUT2000/InicioAutenticacion/IngresoCertificado.html?https://misiir.sii.cl/cgi_misii/siihome.cgi';
+            $urlSesion_Anterior = 'https://hercules.sii.cl/cgi_AUT2000/autInicio.cgi?referencia=https://misiir.sii.cl/cgi_misii/siihome.cgi';
+            $response = $client->get(
+                $urlSesionNueva,
+                [
+                    'headers' => [
+                        'User-Agent' => self::USER_AGENT,
+                        'Accept' => '*/*',
+                        'Connection' => 'keep-alive',
+                    ],
                     'curl' => [
                         CURLOPT_RETURNTRANSFER => 'true',
                         CURLOPT_SSLCERT => $path_cert,
                         CURLOPT_SSLCERTPASSWD => $password_cert,
                     ],
-                ]);
+                ]
+            );
         } catch (ConnectException $e) {
             $this->throwException($e->getMessage());
         }
@@ -668,7 +677,8 @@ class Sii
         try {
             $rut_array = self::getRutArray($rut);
             $client = new \GuzzleHttp\Client();
-            $response = $client->post('https://zeusr.sii.cl/cgi_AUT2000/CAutInicio.cgi',
+            $response = $client->post(
+                'https://zeusr.sii.cl/cgi_AUT2000/CAutInicio.cgi',
                 [
                     'headers' => [
                         'User-Agent' => self::USER_AGENT,
@@ -685,7 +695,8 @@ class Sii
                         'dv' => $rut_array['dv'],
                         'referencia' => 'https://misiir.sii.cl/cgi_misii/siihome.cgi'
                     ]
-                ]);
+                ]
+            );
         } catch (ConnectException $e) {
             $this->throwException($e->getMessage());
         }
@@ -710,7 +721,8 @@ class Sii
         $resource = fopen($path_csv, 'w');
         $cookieJar = $this->obtenerCookies($path_certificado, $password_certificado);
 
-        $response = $client->get(self::generarUrlDescargaContribuyentes(),
+        $response = $client->get(
+            self::generarUrlDescargaContribuyentes(),
             [
                 'headers' => [
                     'User-Agent' => self::USER_AGENT,
@@ -719,7 +731,8 @@ class Sii
                 'sink' => $resource,
                 'cookies' => $cookieJar,
                 'connect_timeout' => 5,
-            ]);
+            ]
+        );
     }
 
     public static function generarUrlDescargaContribuyentes()
@@ -730,8 +743,8 @@ class Sii
             $sol = strtotime(date('Y-m-d'));
         }
 
-        $date = date('Y', $sol).date('m', $sol).date('d', $sol);
-        $url = 'https://palena.sii.cl/cvc_cgi/dte/ce_empresas_dwnld?NOMBRE_ARCHIVO=ce_empresas_dwnld_'.$date.'.csv';
+        $date = date('Y', $sol) . date('m', $sol) . date('d', $sol);
+        $url = 'https://palena.sii.cl/cvc_cgi/dte/ce_empresas_dwnld?NOMBRE_ARCHIVO=ce_empresas_dwnld_' . $date . '.csv';
 
         return $url;
     }
@@ -748,7 +761,7 @@ class Sii
             return isset(self::$direcciones_regionales[$direccion]) ? self::$direcciones_regionales[$direccion] : $direccion;
         }
 
-        return 'SUC '.$comuna;
+        return 'SUC ' . $comuna;
     }
 
     public function multipart_build_query($fields, $boundary, $xml_string = '', $xml_name = '')
@@ -763,7 +776,7 @@ class Sii
                 $dom4->formatOutput = false;
                 $dom4->preserveWhiteSpace = true;
                 $dom4->loadXML($xml_string);
-                $retval .= $dom4->saveXML()."\r\n\r\n";
+                $retval .= $dom4->saveXML() . "\r\n\r\n";
             } else {
                 $retval .= "$boundary\r\nContent-Disposition: form-data; name=\"$key\"\r\n\r\n$value\r\n";
             }
@@ -791,9 +804,9 @@ class Sii
         $data_to_send = [
             'rutEmisor' => $rut_array['rutEmisor'],
             'dvEmisor' => $rut_array['dvEmisor'],
-            'tipoDoc' =>(string) $data['doc_type'],
+            'tipoDoc' => (string) $data['doc_type'],
             'folio' => (string) $data['folio'],
-            ];
+        ];
         $response = null;
         $wsdl_acceptance_claims = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::WSRegistroReclamoProduccion : self::WSRegistroReclamoCertificacion;
         for ($i = 0; $i < $this->reintentos; $i++) {
@@ -836,7 +849,7 @@ class Sii
         $data_to_send = [
             'rutEmisor' => $data['rutEmisor'],
             'dvEmisor' => $data['dvEmisor'],
-            'tipoDoc' =>(string) $data['tipoDoc'],
+            'tipoDoc' => (string) $data['tipoDoc'],
             'folio' => (string) $data['folio'],
         ];
 
@@ -920,19 +933,20 @@ class Sii
         return $data_ws;
     }
 
-    public function subirRcfAlSii(FolioConsumption $folioConsumption, File $file = null){
+    public function subirRcfAlSii(FolioConsumption $folioConsumption, File $file = null)
+    {
 
         $pRutEnvia = substr($folioConsumption->rutEnvia, 0, -2);
         $pDigEnvia = substr($folioConsumption->rutEnvia, -1);
         $pRutEmpresa = substr($folioConsumption->rutEmisor, 0, -2);
         $pDigEmpresa = substr($folioConsumption->rutEmisor, -1);
 
-        if($file === null){
+        if ($file === null) {
             $file = $folioConsumption->files()->latest()->first();
         }
 
         $xml_string = Storage::cloud()->get($file->file_path);
-        $data = ['rutSender'=>$pRutEnvia, 'dvSender'=>$pDigEnvia, 'rutCompany'=>$pRutEmpresa, 'dvCompany'=>$pDigEmpresa, 'archivo'=>$file->file_name];
+        $data = ['rutSender' => $pRutEnvia, 'dvSender' => $pDigEnvia, 'rutCompany' => $pRutEmpresa, 'dvCompany' => $pDigEmpresa, 'archivo' => $file->file_name];
         $agent = 'Mozilla/5.0 (compatible; PROG 1.0; Windows NT 5.0; YComp 5.0.2.4)';
         $boundary = '--7d23e2a11301c4';
         $cuerpo = $this->multipart_build_query($data, $boundary, $xml_string, $file->file_name);
@@ -962,7 +976,8 @@ class Sii
         try {
             for ($i = 0; $i < $this->reintentos; $i++) {
                 $client = new \GuzzleHttp\Client();
-                $response = $client->post($url,
+                $response = $client->post(
+                    $url,
                     [
                         'curl' => [
                             CURLOPT_RETURNTRANSFER => 1,
@@ -974,7 +989,8 @@ class Sii
                             CURLOPT_POSTFIELDS => $cuerpo,
                         ],
 
-                    ]);
+                    ]
+                );
 
                 if ($response->getStatusCode() != 500) {
                     break;
@@ -992,10 +1008,9 @@ class Sii
                 $trackId = (int) (string) $xml->TRACKID;
             }
 
-            if ($estadoUpload == 99){
+            if ($estadoUpload == 99) {
                 $error = $xml->DETAIL->ERROR;
             }
-
         } catch (ConnectException $e) {
             $this->throwException($e->getMessage());
         }
@@ -1023,18 +1038,18 @@ class Sii
         $pDigEmpresa = substr($envioDte->rutEmisor, -1);
 
         $file = $envioDte->archivos()->where('file_id', $file_id)->first();
-        $xml_name = $envioDte->setDteId.'.xml';
+        $xml_name = $envioDte->setDteId . '.xml';
 
         $xml_string = Storage::cloud()->get($file->file_path);
-        $data = ['rutSender'=>$pRutEnvia, 'dvSender'=>$pDigEnvia, 'rutCompany'=>$pRutEmpresa, 'dvCompany'=>$pDigEmpresa, 'archivo'=>$xml_name];
+        $data = ['rutSender' => $pRutEnvia, 'dvSender' => $pDigEnvia, 'rutCompany' => $pRutEmpresa, 'dvCompany' => $pDigEmpresa, 'archivo' => $xml_name];
         $agent = 'Mozilla/5.0 (compatible; PROG 1.0; Windows NT 5.0; YComp 5.0.2.4)';
         $boundary = '--7d23e2a11301c4';
         $cuerpo = $this->multipart_build_query($data, $boundary, $xml_string, $xml_name);
         $cuerpo = str_replace("'", '&apos;', $cuerpo);
 
-        if($envioDte->boleta == 0){
+        if ($envioDte->boleta == 0) {
             $url = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::UploadProduccion : self::UploadCertificacion;
-        }else{
+        } else {
             $url = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::UploadBoletaProduccion : self::UploadBoletaCertificacion;
         }
 
@@ -1050,7 +1065,8 @@ class Sii
         try {
             for ($i = 0; $i < $this->reintentos; $i++) {
                 $client = new \GuzzleHttp\Client();
-                $response = $client->post($url,
+                $response = $client->post(
+                    $url,
                     [
                         'curl' => [
                             CURLOPT_RETURNTRANSFER => 1,
@@ -1062,7 +1078,8 @@ class Sii
                             CURLOPT_POSTFIELDS => $cuerpo,
                         ],
 
-                    ]);
+                    ]
+                );
 
                 if ($response->getStatusCode() != 500) {
                     break;
@@ -1071,7 +1088,7 @@ class Sii
 
             $body = $response->getBody();
 
-            if($envioDte->boleta == 0){
+            if ($envioDte->boleta == 0) {
                 $xml = ($response and $response != 'Error 500') ? new \SimpleXMLElement($body, LIBXML_COMPACT) : false;
 
                 $estadoUpload = (int) (string) $xml->STATUS;
@@ -1085,18 +1102,16 @@ class Sii
                 if ($estadoUpload == 99) {
                     $error = $xml->DETAIL->ERROR;
                 }
-            }else{
+            } else {
                 $content = json_decode($body->getContents());
                 $trackId = (int) (string) $content->trackid;
                 $estadoUpload = $content->estado == 'REC' ? 0 : 99;
                 $error = 0;
             }
-
-
         } catch (ConnectException $e) {
             $this->throwException($e->getMessage());
             return false;
-        } catch (ClientException $clientException){
+        } catch (ClientException $clientException) {
             return false;
         }
 
@@ -1156,7 +1171,7 @@ class Sii
     public function generarUrlDescargaDtesRecibidos($rut, $desde, $hasta)
     {
         $url = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::DTESRecibidosProduccion : self::DTESRecibidosProduccion;
-        $url = $url."DESDE=$desde&HASTA=$hasta&RUT=$rut&TIPO_CONSULTA=Bajar Archivo";
+        $url = $url . "DESDE=$desde&HASTA=$hasta&RUT=$rut&TIPO_CONSULTA=Bajar Archivo";
 
         return $url;
     }
@@ -1201,8 +1216,8 @@ class Sii
         /* @var CertificadoEmpresa $certificado */
         $certificado = $this->empresa->certificados()->where('enUso', 1)->first();
 
-        $uniq_cert = uniqid().'.pem';
-        $uniq_id = uniqid().'.csv';
+        $uniq_cert = uniqid() . '.pem';
+        $uniq_id = uniqid() . '.csv';
         Storage::put($uniq_id, '');
         Storage::put($uniq_cert, $certificado->pemFile->content());
         $path_csv = Storage::path($uniq_id);
@@ -1212,7 +1227,8 @@ class Sii
         $resource = fopen($path_csv, 'w');
         $cookieJar = $this->obtenerCookies($path_certificado, $certificado->password);
 
-        $response = $client->get($this->generarUrlDescargaDtesRecibidos($this->empresa->rut, $desde, $hasta),
+        $response = $client->get(
+            $this->generarUrlDescargaDtesRecibidos($this->empresa->rut, $desde, $hasta),
             [
                 'headers' => [
                     'User-Agent' => self::USER_AGENT,
@@ -1228,7 +1244,8 @@ class Sii
                     CURLOPT_SSL_VERIFYPEER => false,
                     CURLOPT_SSL_VERIFYHOST => false,
                 ],
-            ]);
+            ]
+        );
 
         Storage::delete($uniq_cert);
 
@@ -1238,7 +1255,7 @@ class Sii
     public function getRCVDetail($data, $type = 'CERT')
     {
 
-        if($type == 'CERT'){
+        if ($type == 'CERT') {
             $tokenSII = false;
             for ($i = 0; $i < $this->reintentos; $i++) {
                 $tokenSII = $this->obtenerToken();
@@ -1250,7 +1267,7 @@ class Sii
             if ($tokenSII === false) {
                 return false;
             }
-        }else{
+        } else {
             $cookies = $this->obtenerCookiesNoCERT($this->empresa->rut, '');
             $tokenSII = $cookies->getCookieByName('TOKEN')->getValue();
         }
@@ -1259,9 +1276,9 @@ class Sii
         $pRutEmpresa = substr($this->empresa->rut, 0, -2);
         $pDigEmpresa = substr($this->empresa->rut, -1);
 
-        if ($data['tipo'] == 'RESUMEN'){
+        if ($data['tipo'] == 'RESUMEN') {
             $append_url = 'getResumenExport';
-        }elseif($data['tipo'] == 'DETALLE'){
+        } elseif ($data['tipo'] == 'DETALLE') {
             $append_url = $data['operacion'] == 'VENTA' ? 'getDetalleVentaExport' : 'getDetalleCompraExport';
         }
 
@@ -1273,23 +1290,24 @@ class Sii
         $client = new \GuzzleHttp\Client();
         $array =
             [
-                'data'=> [
-                    'codTipoDoc'=>0,
+                'data' => [
+                    'codTipoDoc' => 0,
                     'dvEmisor' => $pDigEmpresa,
-                    'estadoContab'=> $estadoContab,
+                    'estadoContab' => $estadoContab,
                     'operacion' => $operacion,
                     'ptributario' => $ptributario,
                     'rutEmisor' => $pRutEmpresa,
                 ],
-                    'metaData' => [
-                     'conversationId' => $tokenSII,
-                     'namespace' => "cl.sii.sdi.lob.diii.consdcv.data.api.interfaces.FacadeService/$append_url",
-                     'page' => null,
-                     'transactionId' => $uuid,
+                'metaData' => [
+                    'conversationId' => $tokenSII,
+                    'namespace' => "cl.sii.sdi.lob.diii.consdcv.data.api.interfaces.FacadeService/$append_url",
+                    'page' => null,
+                    'transactionId' => $uuid,
                 ],
             ];
         try {
-            $request = $client->post($url.$append_url,
+            $request = $client->post(
+                $url . $append_url,
                 [
                     'body' => json_encode($array),
                     'headers' => [
@@ -1307,7 +1325,8 @@ class Sii
                         CURLOPT_SSL_VERIFYPEER => false,
                         CURLOPT_SSL_VERIFYHOST => false,
                     ],
-                ]);
+                ]
+            );
 
             if ($request->getStatusCode() != 500) {
                 return $request->getBody()->getContents();
@@ -1319,14 +1338,15 @@ class Sii
         }
     }
 
-    public function consultarEstadoDte($documento, $tokenSII = false){
+    public function consultarEstadoDte($documento, $tokenSII = false)
+    {
 
         $boleta = 0;
-        if($documento['tipo'] == 39 || $documento['tipo'] == 41){
+        if ($documento['tipo'] == 39 || $documento['tipo'] == 41) {
             $boleta = 1;
         }
 
-        if($tokenSII === false){
+        if ($tokenSII === false) {
             for ($i = 0; $i < $this->reintentos; $i++) {
                 $tokenSII = $this->obtenerToken($boleta);
                 if ($tokenSII !== false) {
@@ -1342,7 +1362,7 @@ class Sii
         $array_rut_emisor = self::getRutArray($documento['rut_emisor']);
         $array_rut_receptor = self::getRutArray($documento['rut_receptor']);
 
-        if($boleta == 0){
+        if ($boleta == 0) {
             $array_rut_consultante = self::getRutArray($documento['rut_consultante']);
 
             $data_to_send = [
@@ -1374,7 +1394,7 @@ class Sii
                     usleep(200000);
                 }
             }
-        }else{
+        } else {
             $array_rut_receptor = self::getRutArray($documento['rut_receptor']);
 
             $url_base = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::ApiBoletaProduccion : self::ApiBoletaCertificacion;
@@ -1409,9 +1429,10 @@ class Sii
         return $response;
     }
 
-    public function consultarEstadoEnvio($envio, $tokenSII = false){
+    public function consultarEstadoEnvio($envio, $tokenSII = false)
+    {
 
-        if($tokenSII === false){
+        if ($tokenSII === false) {
             for ($i = 0; $i < $this->reintentos; $i++) {
                 $tokenSII = $this->obtenerToken($envio['boleta']);
                 if ($tokenSII !== false) {
@@ -1426,9 +1447,9 @@ class Sii
 
         $array_rut_emisor = self::getRutArray($envio['rut_emisor']);
 
-        if($envio['boleta'] == 0){
+        if ($envio['boleta'] == 0) {
             return false;
-        }else{
+        } else {
 
             $url_base = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::ApiBoletaProduccion : self::ApiBoletaCertificacion;
             $client = new \GuzzleHttp\Client();
@@ -1490,64 +1511,64 @@ class Sii
             $numero = count($datos);
             $fila++;
 
-            for ($c=0; $c < $numero; $c++) {
+            for ($c = 0; $c < $numero; $c++) {
 
                 $resultado = substr($datos[$c], 0, 7);
 
-                if  ($fila == 3) {
+                if ($fila == 3) {
                     $rut = $datos[$c];
                 }
 
-                if  ($fila == 6) {
+                if ($fila == 6) {
                     $nombre = $datos[$c];
                 }
 
-                if  ($fila == 9 ) {
+                if ($fila == 9) {
                     $direccion_array = explode(',', $datos[$c]);
 
-                    foreach($direccion_array as $part){
-                        $ciudad_comuna = substr( $part, 0, 8 );
+                    foreach ($direccion_array as $part) {
+                        $ciudad_comuna = substr($part, 0, 8);
 
-                        if  ( !in_array( $ciudad_comuna, [' Ciudad ', ' Comuna '] ) ) {
-                            if($direccion == ''){
+                        if (!in_array($ciudad_comuna, [' Ciudad ', ' Comuna '])) {
+                            if ($direccion == '') {
                                 $direccion = trim($part);
-                            }else{
+                            } else {
                                 $direccion = $direccion . ',' .  $part;
                             }
-                        }else{
+                        } else {
                             $final_data = substr($part, 8, 20);
 
-                            if($ciudad_comuna == ' Comuna ') {
+                            if ($ciudad_comuna == ' Comuna ') {
                                 $comuna = $final_data;
                             }
 
-                            if($ciudad_comuna == ' Ciudad ') {
+                            if ($ciudad_comuna == ' Ciudad ') {
                                 $ciudad = $final_data;
                             }
                         }
                     }
-                    $posc_region = $fila+3;
+                    $posc_region = $fila + 3;
                 }
 
-                if  ($fila == $posc_region) {
+                if ($fila == $posc_region) {
                     $region = $datos[$c];
                 }
 
-                if  ($resultado == "Glosa D") {
+                if ($resultado == "Glosa D") {
                     $posc_glosa = $fila + 1;
                 }
 
-                if  ($fila == $posc_glosa) {
+                if ($fila == $posc_glosa) {
                     $glosa = trim($datos[$c]);
                 }
 
-                if  (utf8_encode($datos[$c]) == $a || $datos[$c] == $b) {
+                if (utf8_encode($datos[$c]) == $a || $datos[$c] == $b) {
                     $posc_actividades = $fila + 2;
                 }
 
-                if  ($posc_glosa == null && $fila == $posc_actividades && $datos[$c] != null){
-                    array_push($actividades, ['codigo' => $datos[0], 'descripcion'=> $datos[1]]);
-                    $posc_actividades = $posc_actividades +1;
+                if ($posc_glosa == null && $fila == $posc_actividades && $datos[$c] != null) {
+                    array_push($actividades, ['codigo' => $datos[0], 'descripcion' => $datos[1]]);
+                    $posc_actividades = $posc_actividades + 1;
                 }
             }
         }
@@ -1559,8 +1580,8 @@ class Sii
             'nombre' => $nombre,
             'direccion' => $direccion ?? null,
             'direccion_regional' => $region ?? null,
-            'comuna'=> $comuna ?? null,
-            'ciudad'=> $ciudad ?? null,
+            'comuna' => $comuna ?? null,
+            'ciudad' => $ciudad ?? null,
             'glosa' => $glosa ?? $resultado,
             'actividades_economicas' => $actividades
         ];

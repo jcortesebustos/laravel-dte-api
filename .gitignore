@@ -20,5 +20,7 @@ yarn-error.log
 .env.dev
 .vapor
 vapor.yml
-
+.DS_Store
 .envault.json
+/infrastructure/*
+*.yaml

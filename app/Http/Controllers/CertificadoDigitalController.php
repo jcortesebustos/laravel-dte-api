@@ -110,7 +110,7 @@ class CertificadoDigitalController extends Controller
     {
         $p12 = Empresa::parseCertificado($request);
 
-        if($p12 === false){
+        if ($p12 === false) {
             return redirect()->back();
         }
 
@@ -119,17 +119,18 @@ class CertificadoDigitalController extends Controller
         $validTo = strtotime(date('Y-m-d H:i:s', $p12data['validTo_time_t']));
         $nombrePem = str_replace(['.pfx', '.p12'], '.pem', $request->original->getClientOriginalName());
 
-        $nombre_archivo_temporal = uniqid().'.pem';
-        Storage::put($nombre_archivo_temporal, $p12['cert'].$p12['pkey']);
+        $nombre_archivo_temporal = uniqid() . '.pem';
+        Storage::put($nombre_archivo_temporal, $p12['cert'] . $p12['pkey']);
         $cookieJar = $this->siiComponent->obtenerCookies(Storage::path($nombre_archivo_temporal), $request->input('password'));
+
         Storage::delete($nombre_archivo_temporal);
-        $rut = $cookieJar->getCookieByName('RUT_NS')->getValue().'-'.$cookieJar->getCookieByName('DV_NS')->getValue();
+        $rut = $cookieJar->getCookieByName('RUT_NS')->getValue() . '-' . $cookieJar->getCookieByName('DV_NS')->getValue();
 
         $file = new File;
         $fileUpload = $file->uploadFileFromRequest($request, 'original', 'certificados', $company);
 
         $filePem = new File;
-        $fileUploadPem = $filePem->uploadFileFromContent($company, $p12['cert'].$p12['pkey'], $nombrePem, 'application/x-pem-file', 0, 'certificados');
+        $fileUploadPem = $filePem->uploadFileFromContent($company, $p12['cert'] . $p12['pkey'], $nombrePem, 'application/x-pem-file', 0, 'certificados');
 
         $input = $request->all();
         $input['empresa_id'] = $company->id;
