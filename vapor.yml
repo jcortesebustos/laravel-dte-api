@@ -1,0 +1,36 @@
+id: 18063
+name: dte
+ignore:
+  - .cloud
+environments:
+  production:
+    database: dte-database
+    domain: prod.dteced.cl
+    storage: prod.dteced.cl-bucket
+    balancer: dte-balancer
+    memory: 2048
+    cli-memory: 1024
+    cli-timeout: 900
+    queue-timeout: 300
+    runtime: docker
+    build:
+      - "COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev"
+      - "php artisan event:cache"
+      - "npm install && npm run prod && rm -rf node_modules"
+    deploy:
+      - "php artisan migrate --force"
+
+  staging:
+    domain: dev.dteced.cl
+    storage: dev-dte.teced.cl-bucket
+    balancer: dte-balancer
+    memory: 2048
+    timeout: 30
+    cli-memory: 1024
+    cli-timeout: 900
+    queue-timeout: 300
+    runtime: docker
+    build:
+      - "COMPOSER_MIRROR_PATH_REPOS=1 composer install"
+      - "php artisan event:cache"
+      - "npm install && npm run dev && rm -rf node_modules"

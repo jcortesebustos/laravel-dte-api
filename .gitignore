@@ -19,10 +19,8 @@ yarn-error.log
 .env.staging
 .env.dev
 .vapor
-vapor.yml
 .DS_Store
 .envault.json
-/infrastructure/*
 *.yaml.env.list
 .env.pruebasteced
 .env.list:delete
