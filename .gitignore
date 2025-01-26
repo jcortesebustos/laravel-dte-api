@@ -23,4 +23,7 @@ vapor.yml
 .DS_Store
 .envault.json
 /infrastructure/*
-*.yaml
+*.yaml.env.list
+.env.pruebasteced
+.env.list:delete
+.env.pruebateced

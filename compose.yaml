@@ -1,0 +1,37 @@
+services:
+  app:
+    # Define el servicio llamado 'app'
+    build:
+      context: .
+      dockerfile: ./infrastructure/php/Dockerfile
+      target: dev
+      args:
+        UID: "${UID:-1000}"
+    tty: true
+    working_dir: /home/deploy/laravel
+    volumes:
+      - ./:/home/deploy/laravel:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - backend-tier
+    configs:
+      - source: php-fpm-config
+        target: /usr/local/etc/php-fpm.d/www.conf
+    stdin_open: true
+    command: bash -c "composer install --optimize-autoloader --no-dev && npm install && php-fpm"
+
+volumes:
+  redis-data:
+
+
+configs:
+  nginx-config:
+    file: ./infrastructure/nginx/development/nginx.conf
+  nginx-site-config:
+    file: ./infrastructure/nginx/development/conf.d/default.conf
+  php-fpm-config:
+    file: ./infrastructure/php/development/php-fpm.d/www.conf
+
+networks:
+  # The presence of these objects is sufficient to define them
+  backend-tier: {}
