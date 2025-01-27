@@ -623,7 +623,7 @@ class Sii
     {
         try {
             $client = new \GuzzleHttp\Client();
-            $urlSesionNueva = 'https://zeusr.sii.cl/AUT2000/InicioAutenticacion/IngresoCertificado.html?https://misiir.sii.cl/cgi_misii/siihome.cgi';
+            $urlSesionNueva = 'https://herculesr.sii.cl/cgi_AUT2000/CAutInicio.cgi?https://misiir.sii.cl/cgi_misii/siihome.cgi';
             $urlSesion_Anterior = 'https://hercules.sii.cl/cgi_AUT2000/autInicio.cgi?referencia=https://misiir.sii.cl/cgi_misii/siihome.cgi';
             $response = $client->get(
                 $urlSesionNueva,

@@ -122,7 +122,7 @@ class CertificadoDigitalController extends Controller
         $nombre_archivo_temporal = uniqid() . '.pem';
         Storage::put($nombre_archivo_temporal, $p12['cert'] . $p12['pkey']);
         $cookieJar = $this->siiComponent->obtenerCookies(Storage::path($nombre_archivo_temporal), $request->input('password'));
-
+        //print_r($cookieJar);
         Storage::delete($nombre_archivo_temporal);
         $rut = $cookieJar->getCookieByName('RUT_NS')->getValue() . '-' . $cookieJar->getCookieByName('DV_NS')->getValue();
 
