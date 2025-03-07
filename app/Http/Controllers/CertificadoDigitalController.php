@@ -122,6 +122,42 @@ class CertificadoDigitalController extends Controller
         $nombre_archivo_temporal = uniqid() . '.pem';
         Storage::put($nombre_archivo_temporal, $p12['cert'] . $p12['pkey']);
         $cookieJar = $this->siiComponent->obtenerCookies(Storage::path($nombre_archivo_temporal), $request->input('password'));
+        $rut = "";
+        $b_ExisteRUT_NS = $cookieJar->getCookieByName('RUT_NS');
+        if (!$b_ExisteRUT_NS) {
+            $b_ExisteRUT_NetScape = $cookieJar->getCookieByName('NETSCAPE_LIVEWIRE.rut');
+            if ($b_ExisteRUT_NetScape) {
+                $rut = $cookieJar->getCookieByName('NETSCAPE_LIVEWIRE.rut')->getValue() . '-' . $cookieJar->getCookieByName('NETSCAPE_LIVEWIRE.dv')->getValue();
+            }
+        } else {
+            $rut = $cookieJar->getCookieByName('RUT_NS')->getValue() . '-' . $cookieJar->getCookieByName('DV_NS')->getValue();
+        }
+        Storage::delete($nombre_archivo_temporal);
+        $file = new File;
+        $fileUpload = $file->uploadFileFromRequest($request, 'original', 'certificados', $company);
+
+        $filePem = new File;
+        $fileUploadPem = $filePem->uploadFileFromContent($company, $p12['cert'] . $p12['pkey'], $nombrePem, 'application/x-pem-file', 0, 'certificados');
+
+        $input = $request->all();
+        $input['empresa_id'] = $company->id;
+        $input['rut'] = $rut;
+        $input['original'] = $fileUpload->id;
+        $input['pem'] = $fileUploadPem->id;
+        $input['fechaEmision'] = date(('Y-m-d H:i:s'), $validFrom);
+        $input['fechaVencimiento'] = date(('Y-m-d H:i:s'), $validTo);
+        $input['subject'] = json_encode($p12data['subject']);
+        $input['issuer'] = json_encode($p12data['issuer']);
+
+        $certificadoEmpresa = $this->certificadoEmpresaRepository->create($input);
+        $company->certificados()->where('id', '!=', $certificadoEmpresa->id)->update(['enUso' => 0]);
+        request()->session()->flash('success-message', ['Certificado Digital guardado exitosamente']);
+
+        return redirect(route('companies.show', ['company' => $company->id]));
+        /*
+        $nombre_archivo_temporal = uniqid() . '.pem';
+        Storage::put($nombre_archivo_temporal, $p12['cert'] . $p12['pkey']);
+        $cookieJar = $this->siiComponent->obtenerCookies(Storage::path($nombre_archivo_temporal), $request->input('password'));
         //print_r($cookieJar);
         Storage::delete($nombre_archivo_temporal);
         $rut = $cookieJar->getCookieByName('RUT_NS')->getValue() . '-' . $cookieJar->getCookieByName('DV_NS')->getValue();
@@ -147,6 +183,7 @@ class CertificadoDigitalController extends Controller
         request()->session()->flash('success-message', ['Certificado Digital guardado exitosamente']);
 
         return redirect(route('companies.show', ['company' => $company->id]));
+        */
     }
 
     public function setearEnUso(Company $company, $certificadoDigital)

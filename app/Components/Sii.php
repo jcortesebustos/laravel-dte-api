@@ -618,8 +618,49 @@ class Sii
 
         return $semilla;
     }
+    public function obtenerCookies($path_cert, $password_cert)
+    {
+        try {
+            $client = new \GuzzleHttp\Client();
+            $cookiesAuth = new \GuzzleHttp\Cookie\CookieJar();
+            $response1 = $client->request('GET', 'https://herculesr.sii.cl/cgi_AUT2000/CAutInicio.cgi', [
+                'cert' => [$path_cert, $password_cert],
+                'query' => [
+                    'referencia' => 'https://www.sii.cl',
+                ],
+                'headers' => [
+                    'User-Agent' => self::USER_AGENT,
+                    'Accept' => '*/*',
+                    'Connection' => 'keep-alive',
+                    'Host' => 'herculesr.sii.cl',
+                    'Referer' => 'https://zeusr.sii.cl/AUT2000/InicioAutenticacion/IngresoCertificado.html?https://misiir.sii.cl/cgi_misii/siihome.cgi',
+                    'Cookie' => 's_cc=true',
+                    'Origin' => 'https://zeusr.sii.cl',
+                    'Sec-Fetch-Dest' => 'document',
+                    'Sec-Fetch-Mode' => 'navigate',
+                    'Sec-Fetch-Site' => 'same-site'
+                ],
+                'cookies' => $cookiesAuth
+            ]);
+            $cookies = $cookiesAuth;
+            $cookies_array = [];
+            //$cookies_str = "";
+            foreach ($cookies as $item) {
+                $cookie = explode('=', $item);
+                $cookie_value = explode(';', $cookie[1]);
+                //$cookies_str .= $cookie[0] . "=" . $cookie_value[0] . "; ";
+                $cookies_array[$cookie[0]] = $cookie_value[0];
+            }
 
-    public function obtenerCookies($path_cert, $password_cert): CookieJar
+            $cookieJar = CookieJar::fromArray($cookies_array, 'sii.cl');
+
+            return $cookieJar;
+        } catch (ConnectException $e) {
+            $this->throwException($e->getMessage());
+        }
+    }
+
+    public function obtenerCookies_Respaldo($path_cert, $password_cert): CookieJar
     {
         try {
             $client = new \GuzzleHttp\Client();
