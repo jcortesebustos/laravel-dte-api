@@ -26,8 +26,7 @@
         "laravel/framework": "^6.0",
         "laravel/passport": "^7.4",
         "laravel/tinker": "^2.1",
-        "laravel/vapor-cli": "^1.65",
-        "laravel/vapor-core": "^2.37",
+        "laravel/vapor-core": "^2.1",
         "laravel/vapor-ui": "^1.0",
         "laravelcollective/html": "^6.2",
         "lcobucci/jwt": "3.3.3",
@@ -36,11 +35,9 @@
         "pusher/pusher-php-server": "~4.0",
         "spatie/laravel-permission": "^3.0",
         "spiritix/lada-cache": "^4.0",
-        "zbateson/mail-mime-parser": "^1.1",
-        "ext-openssl": "*"
+        "zbateson/mail-mime-parser": "^1.1"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^2.8",
         "beyondcode/tinkerwell-helper": "^1.0",
         "facade/ignition": "^1.4",
         "fzaninotto/faker": "^1.4",
@@ -52,10 +49,7 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true,
-        "platform": {
-            "php": "7.4"
-        }
+        "sort-packages": true
     },
     "extra": {
         "laravel": {
