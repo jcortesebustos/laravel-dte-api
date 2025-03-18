@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Models\EnvioDte;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 use Response;
 use App\Models\Documento;
 use App\Jobs\SendEmailJob;
@@ -274,17 +275,17 @@ class DocumentoAPIController extends AppBaseController
             return $this->sendError('Documento no encontrado');
         }
 
-        if(!$request->filled('formato_hoja')){
+        if (!$request->filled('formato_hoja')) {
             $termico = 0;
-        }else{
+        } else {
             $termico = $request->input('formato_hoja') == 'termico' ? 1 : 0;
         }
 
         $pdf = $documento->obtenerPdfString("", $termico);
 
-        if($request->filled('responseType') && $request->input('responseType') == 'base64'){
+        if ($request->filled('responseType') && $request->input('responseType') == 'base64') {
             return $this->sendResponse(['file' => base64_encode($pdf)], 'PDF Obtenido');
-        }else{
+        } else {
             return new \Illuminate\Http\Response($pdf, 200, array(
                 'Content-Type' => 'application/pdf',
                 'X-Vapor-Base64-Encode' => 'True',
@@ -325,9 +326,9 @@ class DocumentoAPIController extends AppBaseController
         $xml_file = $documento->archivos()->wherePivot('tipo', TipoArchivo::DTE)->latest()->first();
         $xml = Storage::cloud()->get($xml_file->file_path);
 
-        if($request->filled('responseType') && $request->input('responseType') == 'base64'){
+        if ($request->filled('responseType') && $request->input('responseType') == 'base64') {
             return $this->sendResponse(['file' => base64_encode($xml)], 'XML Obtenido');
-        }else{
+        } else {
             return new \Illuminate\Http\Response($xml, 200, array(
                 'Content-Type' => 'application/xml',
                 'X-Vapor-Base64-Encode' => 'True',
@@ -348,16 +349,16 @@ class DocumentoAPIController extends AppBaseController
 
         $envio = $documento->envios()->where('envios_dtes.contribuyente', 1)->latest()->first();
 
-        if(empty($envio)){
+        if (empty($envio)) {
             return $this->sendError('El documento no posee un envio contribuyente');
         }
 
         $xml_file = $envio->archivos()->latest()->first();
         $xml = Storage::cloud()->get($xml_file->file_path);
 
-        if($request->filled('responseType') && $request->input('responseType') == 'base64'){
+        if ($request->filled('responseType') && $request->input('responseType') == 'base64') {
             return $this->sendResponse(['file' => base64_encode($xml)], 'XML Obtenido');
-        }else{
+        } else {
             return new \Illuminate\Http\Response($xml, 200, array(
                 'Content-Type' => 'application/xml',
                 'X-Vapor-Base64-Encode' => 'True',
@@ -369,7 +370,7 @@ class DocumentoAPIController extends AppBaseController
 
     public function consultarEstadoEnvioSii(Documento $documento, $empresa_id)
     {
-        if($empresa_id != $documento->empresa_id){
+        if ($empresa_id != $documento->empresa_id) {
             return $this->sendError('Documento no encontrado');
         }
 
@@ -381,7 +382,7 @@ class DocumentoAPIController extends AppBaseController
 
     public function consultarEstadoSii(Documento $documento, $empresa_id)
     {
-        if($empresa_id != $documento->empresa_id){
+        if ($empresa_id != $documento->empresa_id) {
             return $this->sendError('Documento no encontrado');
         }
 
@@ -392,14 +393,28 @@ class DocumentoAPIController extends AppBaseController
 
     public function enviarAlSii(APIRequest $request, Documento $documento, $empresa_id)
     {
-        if($empresa_id != $documento->empresa_id){
+        Log::info('Inicio enviarAlSii', [
+            'documento_id' => $documento->id,
+            'empresa_id_param' => $empresa_id,
+            'empresa_id_documento' => $documento->empresa_id,
+            'glosaEstadoSii' => $documento->glosaEstadoSii
+        ]);
+
+        if ($empresa_id != $documento->empresa_id) {
+            Log::warning('Error: empresa_id no coincide', [
+                'documento_id' => $documento->id,
+                'empresa_id_param' => $empresa_id,
+                'empresa_id_documento' => $documento->empresa_id
+            ]);
             return $this->sendError('Documento no encontrado');
         }
 
-        if($documento->glosaEstadoSii !== 'DTE Recibido'){
+        if ($documento->glosaEstadoSii !== 'DTE Recibido') {
+            Log::info('Dispatching ProcesarEnvioDte', ['documento_id' => $documento->id]);
             ProcesarEnvioDte::dispatch($documento->id);
             return $this->sendResponse(['data' => null], 'Documento enviado a cola de envios');
-        }else{
+        } else {
+            Log::warning('Atencion: DTE ya recibido', ['documento_id' => $documento->id]);
             return $this->sendError('El DTE no sera enviado, ya tiene estado "DTE Recibido"');
         }
     }

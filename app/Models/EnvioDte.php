@@ -157,24 +157,34 @@ class EnvioDte extends Model
         /* @var Documento $documento */
         /* @var Empresa $empresa */
         /* @var CertificadoEmpresa $certificado */
+        Log::info('Inicio empaquetarDtes', [
+            'documentos' => $documentos, // Loguea los documentos recibidos
+            'contribuyente' => $contribuyente,
+            'boleta' => $boleta
+        ]);
+
         $empresa_array = [];
         foreach ($documentos as $documento) {
             array_push($empresa_array, $documento->empresa_id);
         }
+        Log::info('Empresas en el empaque', ['empresas' => $empresa_array]);
 
         if (count(array_unique($empresa_array)) > 1) {
+            Log::error('Error: Más de una empresa en el empaque');
             return false;
         }
 
         $empresa = Empresa::find($empresa_array[0]);
-
+        Log::info('Empresa encontrada', ['empresa' => $empresa]); // Loguea la empresa
         if (empty($empresa)) {
+            Log::error('Error: Empresa no encontrada', ['empresa_id' => $empresa_array[0]]);
             return false;
         }
 
         $certificado = $empresa->certificados()->where('enUso', 1)->first();
-
+        Log::info('Certificado encontrado', ['certificado' => $certificado]); // Loguea el certificado
         if (empty($certificado)) {
+            Log::error('Error: Certificado no encontrado para la empresa', ['empresa_id' => $empresa->id]);
             return false;
         }
 
@@ -190,9 +200,15 @@ class EnvioDte extends Model
         $envio->nroDte = count($documentos);
         $envio->fchResol = $boleta == 0 ? $empresa->fechaResolucion : $empresa->fechaResolucionBoleta;
         $envio->nroResol = $boleta == 0 ? $empresa->numeroResolucion : $empresa->numeroResolucionBoleta;
-        $envio->save();
+        Log::info('Antes de guardar EnvioDte', ['envio' => $envio]); // Loguea el objeto $envio antes de guardarlo
+        if (! $envio->save()) {
+            Log::error('Error al guardar EnvioDte en la base de datos'); // Log si falla el guardado
+            return false; // Fundamental: retornar false si no se puede guardar.
+        }
+        Log::info('EnvioDte guardado con ID', ['envio_id' => $envio->id]);
 
-        $envio->setDteId = 'RUT_'.$empresa->rut.'_ENV_'.$envio->id;
+
+        $envio->setDteId = 'RUT_' . $empresa->rut . '_ENV_' . $envio->id;
 
         if ($contribuyente == 1) {
             $envio->setDteId .= '_EC';
@@ -224,9 +240,9 @@ class EnvioDte extends Model
         }
 
         $subTotalDte = '';
-        $caratula = "<Caratula version=\"1.0\">\n<RutEmisor>".$this->rutEmisor."</RutEmisor>\n<RutEnvia>".$this->rutEnvia."</RutEnvia>\n";
-        $caratula .= '<RutReceptor>'.$this->rutReceptor."</RutReceptor>\n<FchResol>".$this->fchResol->format('Y-m-d')."</FchResol>\n<NroResol>".$this->nroResol."</NroResol>\n";
-        $caratula .= '<TmstFirmaEnv>'.$this->tmstFirmaEnv->format(Documento::FORMATO_TIMBRE)."</TmstFirmaEnv>\n";
+        $caratula = "<Caratula version=\"1.0\">\n<RutEmisor>" . $this->rutEmisor . "</RutEmisor>\n<RutEnvia>" . $this->rutEnvia . "</RutEnvia>\n";
+        $caratula .= '<RutReceptor>' . $this->rutReceptor . "</RutReceptor>\n<FchResol>" . $this->fchResol->format('Y-m-d') . "</FchResol>\n<NroResol>" . $this->nroResol . "</NroResol>\n";
+        $caratula .= '<TmstFirmaEnv>' . $this->tmstFirmaEnv->format(Documento::FORMATO_TIMBRE) . "</TmstFirmaEnv>\n";
 
         $documentos = $this->documentos;
 
@@ -237,17 +253,17 @@ class EnvioDte extends Model
 
         $subTotalDte_array = array_count_values(array_column($subTotalDte_array, 'TpoDTE'));
         foreach ($subTotalDte_array as $tipo => $cantidad) {
-            $subTotalDte .= "<SubTotDTE>\n<TpoDTE>".$tipo."</TpoDTE>\n<NroDTE>".$cantidad."</NroDTE>\n</SubTotDTE>\n";
+            $subTotalDte .= "<SubTotDTE>\n<TpoDTE>" . $tipo . "</TpoDTE>\n<NroDTE>" . $cantidad . "</NroDTE>\n</SubTotDTE>\n";
         }
 
-        $caratula .= $subTotalDte."</Caratula>\n";
+        $caratula .= $subTotalDte . "</Caratula>\n";
 
         if ($this->boleta == 0) {
             $EnvioDTE = "<EnvioDTE version='1.0' xmlns='http://www.sii.cl/SiiDte' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sii.cl/SiiDte EnvioDTE_v10.xsd'>\n";
-            $EnvioDTE .= '<SetDTE ID="'.$this->setDteId."\">\n".$caratula."</SetDTE>\n</EnvioDTE>";
+            $EnvioDTE .= '<SetDTE ID="' . $this->setDteId . "\">\n" . $caratula . "</SetDTE>\n</EnvioDTE>";
         } else {
             $EnvioDTE = "<EnvioBOLETA version='1.0' xmlns='http://www.sii.cl/SiiDte' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sii.cl/SiiDte EnvioBOLETA_v11.xsd'>\n";
-            $EnvioDTE .= '<SetDTE ID="'.$this->setDteId."\">\n".$caratula."</SetDTE>\n</EnvioBOLETA>";
+            $EnvioDTE .= '<SetDTE ID="' . $this->setDteId . "\">\n" . $caratula . "</SetDTE>\n</EnvioBOLETA>";
         }
 
         $fragment->appendXML($EnvioDTE);
@@ -297,7 +313,7 @@ class EnvioDte extends Model
     {
         try {
             $file = new File();
-            $fileUpload = $file->uploadFileFromContent($this->empresa, $xml_string, $this->setDteId.'.xml', 'application/xml', 0, 'envios');
+            $fileUpload = $file->uploadFileFromContent($this->empresa, $xml_string, $this->setDteId . '.xml', 'application/xml', 0, 'envios');
 
             return $fileUpload;
         } catch (\Exception $e) {
@@ -386,14 +402,14 @@ class EnvioDte extends Model
         }
 
         if (App::environment(['local', 'staging', 'dev'])) {
-            if($email_address !== null){
+            if ($email_address !== null) {
                 $email->deliveredTo = $email_address;
                 $destinatario = new EmailDestinatario();
                 $destinatario->type = 1;
                 $destinatario->addressTo = $email_address;
                 $destinatario->displayTo = $email_address;
                 $email->destinatarios()->save($destinatario);
-            }else{
+            } else {
                 $email->deliveredTo = config('dte.cron_mail');
                 $destinatario = new EmailDestinatario();
                 $destinatario->type = 1;
@@ -404,7 +420,7 @@ class EnvioDte extends Model
         }
 
         $body = '';
-        $body .= '<b>SRES. '.$destinatario->displayTo.'</b>';
+        $body .= '<b>SRES. ' . $destinatario->displayTo . '</b>';
         $body .= '<br><br>DE ACUERDO A LA NORMATIVA LEGAL VIGENTE, ENVIAMOS DOCUMENTO TRIBUTARIO ELECTRONICO';
         $body .= '<br><br>SE ADJUNTA XML.';
         $email->html = $body;
@@ -419,7 +435,7 @@ class EnvioDte extends Model
         $siiComponent = new Sii($this->empresa);
         $data = $siiComponent->subirEnvioDteAlSii($this, $this->archivos()->first()->id);
 
-        if($data !== false){
+        if ($data !== false) {
             $this->estado = $data['status'];
             $this->rspUpload = Sii::getRspUploadTextFromStatus($this->estado);
 
@@ -432,7 +448,7 @@ class EnvioDte extends Model
             }
 
             $this->update();
-        }else{
+        } else {
             //SubirEnvioDteSii::dispatch($documento->id);
         }
     }
@@ -450,14 +466,13 @@ class EnvioDte extends Model
 
         $data = $siiComponent->consultarEstadoEnvio($envio, $token);
 
-        if($update){
-            if(!$this->boleta){
-
-            }else{
+        if ($update) {
+            if (!$this->boleta) {
+            } else {
 
                 $rechazados_reparos = 0;
-                if(isset($data->estadistica)){
-                    foreach($data->estadistica as $estadistica){
+                if (isset($data->estadistica)) {
+                    foreach ($data->estadistica as $estadistica) {
                         $resultado_envio = new EstadisticaEnvio();
                         $resultado_envio->envio_dte_id = $this->id;
                         $resultado_envio->empresa_id = $this->empresa_id;
@@ -468,7 +483,7 @@ class EnvioDte extends Model
                         $resultado_envio->reparo = $estadistica->reparos;
                         $resultado_envio->save();
 
-                        if($estadistica->reparos > 0 || $estadistica->rechazados > 0){
+                        if ($estadistica->reparos > 0 || $estadistica->rechazados > 0) {
                             $rechazados_reparos++;
                         }
                     }
@@ -476,8 +491,8 @@ class EnvioDte extends Model
 
 
                 $folios_array = [];
-                if($rechazados_reparos > 0 || isset($data->detalle_rep_rech)){
-                    foreach($data->detalle_rep_rech as $detalle){
+                if ($rechazados_reparos > 0 || isset($data->detalle_rep_rech)) {
+                    foreach ($data->detalle_rep_rech as $detalle) {
                         $revision = new EnvioDteRevision();
                         $revision->envio_dte_id = $this->id;
                         $revision->empresa_id = $this->empresa_id;
@@ -487,10 +502,10 @@ class EnvioDte extends Model
                         $revision->estado = $detalle->estado;
                         $revision->save();
 
-                        $folio_array = ['Folio'=>$detalle->folio, 'TipoDTE'=>$detalle->tipo, 'Estado'=>$detalle->estado];
+                        $folio_array = ['Folio' => $detalle->folio, 'TipoDTE' => $detalle->tipo, 'Estado' => $detalle->estado];
                         array_push($folios_array, $folio_array);
 
-                        foreach($detalle->error as $error){
+                        foreach ($detalle->error as $error) {
                             $detalles_revision = new EnvioDteRevisionDetalle();
                             $detalles_revision->envio_dte_revision_id = $revision->id;
                             $detalles_revision->empresa_id = $this->empresa_id;
@@ -502,7 +517,7 @@ class EnvioDte extends Model
 
                 $arreglo_envio = [];
                 foreach ($this->documentos as $dte_enviar) {
-                    array_push($arreglo_envio, ['TipoDTE'=>$dte_enviar->idDoc->TipoDTE, 'Folio'=>$dte_enviar->folio, 'Marca'=>0, 'Estado'=>'', 'id'=>$dte_enviar->id]);
+                    array_push($arreglo_envio, ['TipoDTE' => $dte_enviar->idDoc->TipoDTE, 'Folio' => $dte_enviar->folio, 'Marca' => 0, 'Estado' => '', 'id' => $dte_enviar->id]);
                 }
 
                 foreach ($arreglo_envio as &$arreglo) {
@@ -529,7 +544,7 @@ class EnvioDte extends Model
                         $dte_enviar->glosaErrSii = 'Documento NO Recibido por el SII. [API]';
                     }
 
-                    if($data->estado == "RSC"){
+                    if ($data->estado == "RSC") {
                         $dte_enviar->glosaEstadoSii .= ' [ESQUEMA]';
                     }
 
@@ -537,16 +552,16 @@ class EnvioDte extends Model
                 }
             }
 
-            if($data->estado == "EPR"){
+            if ($data->estado == "EPR") {
                 $this->recepEnvGlosa = 'Envio Recibido';
-            }else{
+            } else {
                 $this->recepEnvGlosa = 'Envio Rechazado';
             }
 
             $this->save();
         }
 
-        if($return){
+        if ($return) {
             return $data;
         }
     }
