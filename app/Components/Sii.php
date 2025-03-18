@@ -642,22 +642,22 @@ class Sii
                 ],
                 'cookies' => $cookiesAuth
             ]);
-            $cookies = $cookiesAuth;
-            $cookies_array = [];
-            //$cookies_str = "";
-            foreach ($cookies as $item) {
-                $cookie = explode('=', $item);
-                $cookie_value = explode(';', $cookie[1]);
-                //$cookies_str .= $cookie[0] . "=" . $cookie_value[0] . "; ";
-                $cookies_array[$cookie[0]] = $cookie_value[0];
-            }
-
-            $cookieJar = CookieJar::fromArray($cookies_array, 'sii.cl');
-
-            return $cookieJar;
         } catch (ConnectException $e) {
             $this->throwException($e->getMessage());
         }
+        $cookies = $cookiesAuth;
+        $cookies_array = [];
+        //$cookies_str = "";
+        foreach ($cookies as $item) {
+            $cookie = explode('=', $item);
+            $cookie_value = explode(';', $cookie[1]);
+            //$cookies_str .= $cookie[0] . "=" . $cookie_value[0] . "; ";
+            $cookies_array[$cookie[0]] = $cookie_value[0];
+        }
+
+        $cookieJar = CookieJar::fromArray($cookies_array, 'sii.cl');
+
+        return $cookieJar;
     }
 
     public function obtenerCookies_Respaldo($path_cert, $password_cert): CookieJar
