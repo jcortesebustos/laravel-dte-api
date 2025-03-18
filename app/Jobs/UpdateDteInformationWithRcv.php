@@ -45,33 +45,36 @@ class UpdateDteInformationWithRcv implements ShouldQueue
 
         $rcv = $this->siiComponent->getRCVDetail($data);
         $decoded = json_decode($rcv);
-        $fp = fopen('php://filter/read=convert.base64-encode/resource=php://temp/maxmemory:1048576', 'w');
+        $x = (array)$decoded;
+        if (!empty($x)) {
+            $fp = fopen('php://filter/read=convert.base64-encode/resource=php://temp/maxmemory:1048576', 'w');
 
-        if ($fp === false) {
-            echo 'Failed to open temporary file';
-            exit();
-        }
-
-        if (count($decoded->data) > 1) {
-            $count = 0;
-            foreach ($decoded->data as $line) {
-                if ($count > 0) {
-                    $line_to_read = explode(';', $line);
-                    $data_readed = [
-                        'company_id' => $this->empresa->id,
-                        'rut' => $this->empresa->rut,
-                        'doc_type' => $line_to_read[1],
-                        'folio' => $line_to_read[5],
-                        'reception_date' => Carbon::createFromFormat('d/m/Y H:i:s', $line_to_read[7])->format('Y-m-d H:i:s'),
-                    ];
-                    $di = DocumentInformation::firstOrCreate($data_readed);
-                    Log::info('Fecha Recepción: '.$di->reception_date."\n");
-                }
-                $count++;
+            if ($fp === false) {
+                echo 'Failed to open temporary file';
+                exit();
             }
 
-            rewind($fp);
-            fclose($fp);
+            if (count($decoded->data) > 1) {
+                $count = 0;
+                foreach ($decoded->data as $line) {
+                    if ($count > 0) {
+                        $line_to_read = explode(';', $line);
+                        $data_readed = [
+                            'company_id' => $this->empresa->id,
+                            'rut' => $this->empresa->rut,
+                            'doc_type' => $line_to_read[1],
+                            'folio' => $line_to_read[5],
+                            'reception_date' => Carbon::createFromFormat('d/m/Y H:i:s', $line_to_read[7])->format('Y-m-d H:i:s'),
+                        ];
+                        $di = DocumentInformation::firstOrCreate($data_readed);
+                        Log::info('Fecha Recepción: ' . $di->reception_date . "\n");
+                    }
+                    $count++;
+                }
+
+                rewind($fp);
+                fclose($fp);
+            }
         }
     }
 }
