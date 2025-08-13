@@ -325,7 +325,7 @@ class Documento extends Model
         if (! empty($this->idDoc)) {
             $dte_documento->getEncabezado()->setIdDoc();
             foreach ($this->idDoc->getAttributes() as $index => $value) {
-                $set = 'set'.$index;
+                $set = 'set' . $index;
                 if (method_exists($dte_documento->getEncabezado()->getIdDoc(), $set) && $value !== null) {
                     $dte_documento->getEncabezado()->getIdDoc()->$set((string) $value);
                 }
@@ -335,7 +335,7 @@ class Documento extends Model
         if (! empty($this->emisor)) {
             $dte_documento->getEncabezado()->setEmisor();
             foreach ($this->emisor->getAttributes() as $index => $value) {
-                $set = 'set'.$index;
+                $set = 'set' . $index;
                 if (method_exists($dte_documento->getEncabezado()->getEmisor(), $set) && $value !== null && $value !== '') {
                     $dte_documento->getEncabezado()->getEmisor()->$set((string) $value);
                 }
@@ -358,7 +358,7 @@ class Documento extends Model
         if (! empty($this->receptor)) {
             $dte_documento->getEncabezado()->setReceptor();
             foreach ($this->receptor->getAttributes() as $index => $value) {
-                $set = 'set'.$index;
+                $set = 'set' . $index;
                 if (method_exists($dte_documento->getEncabezado()->getReceptor(), $set) && $value !== null) {
                     $dte_documento->getEncabezado()->getReceptor()->$set((string) $value);
                 }
@@ -373,7 +373,7 @@ class Documento extends Model
                 }
 
                 foreach ($this->transporte->getAttributes() as $index => $value) {
-                    $set = 'set'.$index;
+                    $set = 'set' . $index;
 
                     if (method_exists($dte_documento->getEncabezado()->getTransporte()->getChofer(), $set) && $value !== null) {
                         $dte_documento->getEncabezado()->getTransporte()->getChofer()->$set((string) $value);
@@ -389,13 +389,13 @@ class Documento extends Model
         if (! empty($this->totales)) {
             $dte_documento->getEncabezado()->setTotales();
             foreach ($this->totales->getAttributes() as $index => $value) {
-                $set = 'set'.$index;
+                $set = 'set' . $index;
                 if (method_exists($dte_documento->getEncabezado()->getTotales(), $set) && $value !== null) {
                     if ($index == 'MntTotal' || $index == 'MntNeto' || $index == 'MntExe') {
                         $value = (int) round($value);
                     }
 
-                    if($this->idDoc->TipoDTE == 34 && in_array($index, ['TasaIVA', 'MntNeto', 'IVA'])){
+                    if ($this->idDoc->TipoDTE == 34 && in_array($index, ['TasaIVA', 'MntNeto', 'IVA'])) {
                         continue;
                     }
 
@@ -403,7 +403,7 @@ class Documento extends Model
                 }
             }
 
-            if($this->idDoc->TipoDTE == 41){
+            if ($this->idDoc->TipoDTE == 41) {
                 $dte_documento->getEncabezado()->getTotales()->setMntNeto(null);
                 $dte_documento->getEncabezado()->getTotales()->setIVA(null);
             }
@@ -424,7 +424,7 @@ class Documento extends Model
                 }
 
                 foreach ($detalle->getAttributes() as $index => $value) {
-                    $set = 'set'.$index;
+                    $set = 'set' . $index;
 
                     if (($index == 'TpoCodigo' || $index == 'VlrCodigo') && ! empty($value) && $value !== null) {
                         if (isset($detalle->TpoCodigo) && isset($detalle->VlrCodigo)) {
@@ -455,7 +455,7 @@ class Documento extends Model
                 }
 
                 foreach ($dscRcg->getAttributes() as $index => $value) {
-                    $set = 'set'.$index;
+                    $set = 'set' . $index;
                     if (method_exists($dscRcg_xml, $set) && $value !== null) {
                         $dscRcg_xml->$set((string) $value);
                     }
@@ -475,9 +475,9 @@ class Documento extends Model
                 }
 
                 foreach ($referencia->getAttributes() as $index => $value) {
-                    $set = 'set'.$index;
+                    $set = 'set' . $index;
                     if (method_exists($referencia_xml, $set) && $value !== null) {
-                        if($index == 'TpoDocRef' && $value == 'SET' && $type == 3){
+                        if ($index == 'TpoDocRef' && $value == 'SET' && $type == 3) {
                             continue;
                         }
 
@@ -486,7 +486,6 @@ class Documento extends Model
                         if ($index == 'CodRef' && $value == 0) {
                             $referencia_xml->$set((string) 'SET');
                         }
-
                     }
                 }
                 $dte_documento->setReferencia($referencia_xml);
@@ -592,15 +591,15 @@ class Documento extends Model
         $MONTO = $DTE_TIMBRE->getElementsByTagName('MNT')->item(0)->nodeValue;
         $RUTRECE = $DTE_TIMBRE->getElementsByTagName('RR')->item(0)->nodeValue;
 
-        if($IT1 == ''){
+        if ($IT1 == '') {
             $IT1_XML = "<IT1>VENTA</IT1>";
-        }else{
+        } else {
             $IT1_XML = "<IT1>$IT1</IT1>";
         }
 
-        $DD2 = '<DD><RE>'.$RUTEMIS.'</RE><TD>'.$TD.'</TD><F>'.$FOLIO.'</F><FE>'.$FECHA.'</FE><RR>'.$RUTRECE.
-            '</RR><RSR>'.$RSR.'</RSR><MNT>'.$MONTO.'</MNT>'.$IT1_XML."{$data['CAF']}<TSTED>".
-            $this->TSTED.'</TSTED></DD>';
+        $DD2 = '<DD><RE>' . $RUTEMIS . '</RE><TD>' . $TD . '</TD><F>' . $FOLIO . '</F><FE>' . $FECHA . '</FE><RR>' . $RUTRECE .
+            '</RR><RSR>' . $RSR . '</RSR><MNT>' . $MONTO . '</MNT>' . $IT1_XML . "{$data['CAF']}<TSTED>" .
+            $this->TSTED . '</TSTED></DD>';
 
         $FRMT = ObjectAndXML::buildSign($DD2, $data['priv_key']);
         $fragment = $DTE_TIMBRE->createDocumentFragment();
@@ -652,7 +651,7 @@ class Documento extends Model
 
     public function generarDteId()
     {
-        $id = 'ID'.$this->id.'_T'.$this->idDoc->TipoDTE.'_F'.$this->idDoc->Folio;
+        $id = 'ID' . $this->id . '_T' . $this->idDoc->TipoDTE . '_F' . $this->idDoc->Folio;
 
         return $id;
     }
@@ -743,9 +742,9 @@ class Documento extends Model
         if (isset($this->empresa->sucursales)) {
             foreach ($this->empresa->sucursales as $sucursal) {
                 if ($sucursal->tipo == 2) {
-                    $texto_sucursales .= 'SUCURSAL: '.$sucursal->direccion.', COMUNA: '.mb_strtoupper($sucursal->comuna, 'UTF-8').',  CIUDAD: '.mb_strtoupper($sucursal->ciudad, 'UTF-8').'<br/>';
+                    $texto_sucursales .= 'SUCURSAL: ' . $sucursal->direccion . ', COMUNA: ' . mb_strtoupper($sucursal->comuna, 'UTF-8') . ',  CIUDAD: ' . mb_strtoupper($sucursal->ciudad, 'UTF-8') . '<br/>';
                 } else {
-                    $texto_domicilio .= $sucursal->direccion.', COMUNA: '.mb_strtoupper($sucursal->comuna, 'UTF-8').', CIUDAD: '.mb_strtoupper($sucursal->ciudad, 'UTF-8').'<br/>';
+                    $texto_domicilio .= $sucursal->direccion . ', COMUNA: ' . mb_strtoupper($sucursal->comuna, 'UTF-8') . ', CIUDAD: ' . mb_strtoupper($sucursal->ciudad, 'UTF-8') . '<br/>';
                 }
             }
         }
@@ -783,7 +782,7 @@ class Documento extends Model
             'termico' => $termico,
             'TipoDTE' => $this->idDoc->TipoDTE,
             'observaciones' => $this->observaciones,
-            'logo' => $this->empresa->logo_id ? Storage::cloud()->temporaryUrl($this->empresa->logo->file_path, Carbon::now()->addMinutes(1)): null,
+            'logo' => $this->empresa->logo_id ? Storage::cloud()->temporaryUrl($this->empresa->logo->file_path, Carbon::now()->addMinutes(1)) : null,
             'school_with_text' => $this->empresa->school_with_text
         ];
 
@@ -793,7 +792,7 @@ class Documento extends Model
     public function subirXmlDteS3($xml_string)
     {
         $file = new File();
-        $fileUpload = $file->uploadFileFromContent($this->empresa, $xml_string, $this->generarDteId().'.xml', 'application/xml', 0, 'dte');
+        $fileUpload = $file->uploadFileFromContent($this->empresa, $xml_string, $this->generarDteId() . '.xml', 'application/xml', 0, 'dte');
 
         return $fileUpload;
     }
@@ -801,7 +800,7 @@ class Documento extends Model
     public function subirPdfDteS3($pdf_string)
     {
         $file = new File();
-        $fileUpload = $file->uploadFileFromContent($this->empresa, $pdf_string, $this->generarDteId().'.pdf', 'application/pdf', 0, 'pdf');
+        $fileUpload = $file->uploadFileFromContent($this->empresa, $pdf_string, $this->generarDteId() . '.pdf', 'application/pdf', 0, 'pdf');
 
         return $fileUpload;
     }
@@ -831,7 +830,7 @@ class Documento extends Model
 
     public function obtenerPdfString($xml_string = "", $termico = 1)
     {
-        if($xml_string == ""){
+        if ($xml_string == "") {
             $xml_file = $this->archivos()->wherePivot('tipo', TipoArchivo::DTE)->latest()->first();
             $xml_string = Storage::cloud()->get($xml_file->file_path);
         }
@@ -857,13 +856,13 @@ class Documento extends Model
     {
         $documentos = self::where('empresa_id', $empresa_id)
             ->where('IO', 0)
-            ->where(function($query){
-                $query->where(function($query3){
+            ->where(function ($query) {
+                $query->where(function ($query3) {
                     $query3->where('glosaEstadoSii', '<>', 'DTE Recibido')->where('glosaErrSii', '<>', 'Documento Anulado');
                 })->orWhereNull('glosaEstadoSii')
                     ->orWhereRaw('DATE(created_at) >= DATE_ADD(CURDATE(), INTERVAL -6 MINUTE)');
-             })
-            ->where(function($query2){
+            })
+            ->where(function ($query2) {
                 $query2->where('tipo_documento_id', '<>', 20)
                     ->where('tipo_documento_id', '<>', 21);
             })->get();
@@ -875,10 +874,10 @@ class Documento extends Model
     {
         $boletas = self::where('empresa_id', $empresa_id)
             ->where('IO', 0)
-            ->where(function($query){
+            ->where(function ($query) {
                 $query->where('glosaEstadoSii', '<>', 'DTE Recibido')->orWhereNull('glosaEstadoSii');
             })
-            ->where(function($query2){
+            ->where(function ($query2) {
                 $query2->where('tipo_documento_id', 20)
                     ->orWhere('tipo_documento_id',  21);
             })
@@ -891,9 +890,9 @@ class Documento extends Model
     public static function buscar(Request $request, $company_id = null)
     {
         $documentos = self::with(['idDoc', 'emisor', 'receptor', 'transporte', 'totales', 'detalle', 'referencia', 'actividadesEconomicas', 'dscRcgGlobal', 'tipoDocumento'])
-           ->join('documentos_iddoc', 'documentos.id', '=', 'documentos_iddoc.documento_id')
-           ->join('documentos_totales', 'documentos.id', '=', 'documentos_totales.documento_id')
-       ->orderBy('documentos.id', 'DESC')->select('documentos.*');
+            ->join('documentos_iddoc', 'documentos.id', '=', 'documentos_iddoc.documento_id')
+            ->join('documentos_totales', 'documentos.id', '=', 'documentos_totales.documento_id')
+            ->orderBy('documentos.id', 'DESC')->select('documentos.*');
 
         if ($company_id === null) {
             if ($request->is('api*')) {
@@ -921,11 +920,11 @@ class Documento extends Model
             });
         }
 
-        if($request->filled('tipo_documento_id')) {
-           $documentos = $documentos->where('documentos.tipo_documento_id', $request->input('tipo_documento_id'));
+        if ($request->filled('tipo_documento_id')) {
+            $documentos = $documentos->where('documentos.tipo_documento_id', $request->input('tipo_documento_id'));
         }
 
-        if($request->filled('monto')) {
+        if ($request->filled('monto')) {
             $documentos = $documentos->where('documentos_totales.MntTotal', $request->input('monto'));
         }
 
@@ -982,7 +981,7 @@ class Documento extends Model
         $email->destinatarios()->save($destinatario);
 
         $body = '';
-        $body .= '<b>SRES. '.$destinatario->displayTo.'</b>';
+        $body .= '<b>SRES. ' . $destinatario->displayTo . '</b>';
         $body .= '<br><br>DE ACUERDO A LA NORMATIVA LEGAL VIGENTE, ENVIAMOS DOCUMENTO TRIBUTARIO ELECTRONICO';
         $body .= '<br><br>SE ADJUNTA PDF.';
         $email->html = $body;
@@ -1000,12 +999,11 @@ class Documento extends Model
     public function obtenerAnoResolucion()
     {
         return $this->idDoc->TipoDTE == 39 || $this->idDoc->TipoDTE == 41 ? $this->empresa->fechaResolucionBoleta->format('Y') : $this->empresa->fechaResolucion->format('Y');
-
     }
 
     public function obtenerPDF417($xml_string = "")
     {
-        if($xml_string == ""){
+        if ($xml_string == "") {
             $xml_file = $this->archivos()->wherePivot('tipo', TipoArchivo::DTE)->latest()->first();
             $xml_string = Storage::cloud()->get($xml_file->file_path);
         }
@@ -1021,13 +1019,14 @@ class Documento extends Model
         $barcode = new tcpdf_barcodes_2d($ted, 'PDF417,1,5');
         $pdf417html = $barcode->getBarcodePNG(1.0, 0.6);
 
-        return 'data:image/png;base64,'.base64_encode($pdf417html);
+        return 'data:image/png;base64,' . base64_encode($pdf417html);
     }
 
-    public static function folioExiste($folio, $tipo_documento_id, $empresa_id){
+    public static function folioExiste($folio, $tipo_documento_id, $empresa_id)
+    {
         $consulta = Documento::where('folio', $folio)->where('tipo_documento_id', $tipo_documento_id)->where('empresa_id', $empresa_id)->where('IO', 0)->first();
 
-        if(!empty($consulta)){
+        if (!empty($consulta)) {
             return true;
         }
 
@@ -1036,51 +1035,64 @@ class Documento extends Model
 
     public function consultarEstadoSii($token = false, $force = false, $return = false)
     {
-        /* @var CertificadoEmpresa $certificado  */
-        $certificado = $this->empresa->certificados()->where('enUso', 1)->first();
-        $siiComponent = new Sii($this->empresa);
+        try {
+            /* @var CertificadoEmpresa $certificado  */
+            $certificado = $this->empresa->certificados()->where('enUso', 1)->first();
+            Log::info('Inicio consultarEstadoSii', ['certificado' => $certificado]);
+            $siiComponent = new Sii($this->empresa);
+            Log::info('Sii Empresa', ['Empresa' => $this->empresa]);
+            if ($this->glosaEstadoSii != 'DTE Recibido' || $force) {
+                $documento = [
+                    'rut_emisor' => $this->emisor->RUTEmisor,
+                    'rut_receptor' => $this->receptor->RUTRecep,
+                    'rut_consultante' => $certificado->rut,
+                    'tipo' => $this->idDoc->TipoDTE,
+                    'folio' => (string) $this->idDoc->Folio,
+                    'fecha_emision' => $this->idDoc->FchEmis->format('dmY'),
+                    'fecha_emision_boleta' => $this->idDoc->FchEmis->format('d-m-Y'),
+                    'monto' => (string) $this->totales->MntTotal
+                ];
+                Log::info('documento a consultar', ['documento' => $documento]);
 
-        if($this->glosaEstadoSii != 'DTE Recibido' || $force){
-            $documento = [
-                'rut_emisor' => $this->emisor->RUTEmisor,
-                'rut_receptor' => $this->receptor->RUTRecep,
-                'rut_consultante' => $certificado->rut,
-                'tipo' => $this->idDoc->TipoDTE,
-                'folio' => (string) $this->idDoc->Folio,
-                'fecha_emision' => $this->idDoc->FchEmis->format('dmY'),
-                'fecha_emision_boleta' => $this->idDoc->FchEmis->format('d-m-Y'),
-                'monto' => (string) $this->totales->MntTotal
-            ];
+                $data = $siiComponent->consultarEstadoDte($documento, $token);
+                Log::info('data post consultar estado documento', ['data' => $data]);
 
-            $data = $siiComponent->consultarEstadoDte($documento, $token);
+                if (!in_array($this->idDoc->TipoDTE, [39, 41])) {
+                    $formato = str_replace('SII:', '', $data);
+                    Log::info('data formato', ['formato' => $formato]);
+                    $xml = simplexml_load_string($formato);
+                    Log::info('data xml', ['xml' => $xml]);
+                    $this->estadoSii = $xml->RESP_HDR->ESTADO;
+                    $this->glosaEstadoSii = $xml->RESP_HDR->GLOSA_ESTADO;
+                    $this->errCode = $xml->RESP_HDR->ERR_CODE;
+                    $this->glosaErrSii = $xml->RESP_HDR->GLOSA_ERR;
+                    $this->save();
+                } else {
+                    if (strpos($data->descripcion, "Documento Recibido por el SII") === false) {
+                        $this->glosaEstadoSii = 'DTE No Recibido';
+                    } else {
+                        $this->glosaEstadoSii = 'DTE Recibido';
+                        $this->glosaErrSii = 'Documento Recibido por el SII. Datos Coinciden con los Registrados [API]';
+                    }
 
-            if(!in_array($this->idDoc->TipoDTE, [39,41])){
-                $formato = str_replace('SII:', '', $data );
-                $xml = simplexml_load_string($formato);
-                $this->estadoSii = $xml->RESP_HDR->ESTADO;
-                $this->glosaEstadoSii = $xml->RESP_HDR->GLOSA_ESTADO;
-                $this->errCode = $xml->RESP_HDR->ERR_CODE;
-                $this->glosaErrSii = $xml->RESP_HDR->GLOSA_ERR;
-                $this->save();
-            }else{
-                if(strpos($data->descripcion, "Documento Recibido por el SII") === false){
-                    $this->glosaEstadoSii = 'DTE No Recibido';
-                }else{
-                    $this->glosaEstadoSii = 'DTE Recibido';
-                    $this->glosaErrSii = 'Documento Recibido por el SII. Datos Coinciden con los Registrados [API]';
+                    $this->estadoSii = $data->codigo;
+                    $this->glosaErrSii = $data->descripcion;
+                    $this->save();
                 }
 
-                $this->estadoSii = $data->codigo;
-                $this->glosaErrSii = $data->descripcion;
-                $this->save();
-            }
+                Log::info('Documento con ID: ' . $this->id . ' actualizado con estado:' . $this->glosaEstadoSii);
 
-            Log::info('Documento con ID: ' . $this->id . ' actualizado con estado:' . $this->glosaEstadoSii);
-
-            if($return){
-                return $data;
+                if ($return) {
+                    return $data;
+                }
             }
+        } catch (\Exception $e) {
+            Log::error('Excepción en consultarEstadoSii', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString() // Importante: Incluir el stack trace completo.
+            ]);
         }
     }
-
 }

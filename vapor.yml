@@ -31,6 +31,14 @@ environments:
     queue-timeout: 300
     runtime: docker
     build:
-      - "COMPOSER_MIRROR_PATH_REPOS=1 composer install"
+      - "COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev --prefer-dist --no-interaction"
+      - "php -m | grep -i imap || (echo 'FALTA ext-imap' && exit 1)"
+      - "php artisan config:clear"
+      - "php artisan route:clear"
+      - "php artisan event:clear"
+      - "php artisan view:clear"
+      - "php artisan config:cache"
+      - "php artisan route:cache"
       - "php artisan event:cache"
+      - "php artisan view:cache"
       - "npm install && npm run dev && rm -rf node_modules"

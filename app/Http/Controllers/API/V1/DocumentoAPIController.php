@@ -382,10 +382,21 @@ class DocumentoAPIController extends AppBaseController
 
     public function consultarEstadoSii(Documento $documento, $empresa_id)
     {
+        Log::info('Inicio consultarEstadoSii', [
+            'documento_id' => $documento->id,
+            'empresa_id_param' => $empresa_id,
+            'empresa_id_documento' => $documento->empresa_id,
+            'glosaEstadoSii' => $documento->glosaEstadoSii
+        ]);
         if ($empresa_id != $documento->empresa_id) {
+            Log::warning('Error: empresa_id no coincide', [
+                'documento_id' => $documento->id,
+                'empresa_id_param' => $empresa_id,
+                'empresa_id_documento' => $documento->empresa_id
+            ]);
             return $this->sendError('Documento no encontrado');
         }
-
+        Log::info('Previo a Consultar', ['documento_id' => $documento->id]);
         $data = $documento->consultarEstadoSii(false, true, true);
 
         return $this->sendResponse(['data' => $data], '');
