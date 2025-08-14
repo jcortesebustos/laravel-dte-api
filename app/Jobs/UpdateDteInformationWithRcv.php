@@ -67,7 +67,7 @@ class UpdateDteInformationWithRcv implements ShouldQueue
                             'reception_date' => Carbon::createFromFormat('d/m/Y H:i:s', $line_to_read[7])->format('Y-m-d H:i:s'),
                         ];
                         $di = DocumentInformation::firstOrCreate($data_readed);
-                        Log::info('Fecha Recepción: ' . $di->reception_date . "\n");
+                        //Log::info('Fecha Recepción: ' . $di->reception_date . "\n");
                     }
                     $count++;
                 }

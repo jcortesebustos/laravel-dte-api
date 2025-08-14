@@ -396,7 +396,7 @@ class DocumentoAPIController extends AppBaseController
             ]);
             return $this->sendError('Documento no encontrado');
         }
-        Log::info('Previo a Consultar', ['documento_id' => $documento->id]);
+        //Log::info('Previo a Consultar', ['documento_id' => $documento->id]);
         $data = $documento->consultarEstadoSii(false, true, true);
 
         return $this->sendResponse(['data' => $data], '');

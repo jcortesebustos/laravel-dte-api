@@ -231,7 +231,7 @@ class EnvioDte extends Model
         foreach ($documentos as $documento) {
             array_push($empresa_array, $documento->empresa_id);
         }
-        Log::info('Empresas en el empaque', ['empresas' => $empresa_array]);
+       // Log::info('Empresas en el empaque', ['empresas' => $empresa_array]);
 
         if (count(array_unique($empresa_array)) > 1) {
             Log::error('Error: Más de una empresa en el empaque');
@@ -239,14 +239,14 @@ class EnvioDte extends Model
         }
 
         $empresa = Empresa::find($empresa_array[0]);
-        Log::info('Empresa encontrada', ['empresa' => $empresa]); // Loguea la empresa
+       // Log::info('Empresa encontrada', ['empresa' => $empresa]); // Loguea la empresa
         if (empty($empresa)) {
             Log::error('Error: Empresa no encontrada', ['empresa_id' => $empresa_array[0]]);
             return false;
         }
 
         $certificado = $empresa->certificados()->where('enUso', 1)->first();
-        Log::info('Certificado encontrado', ['certificado' => $certificado]); // Loguea el certificado
+        //Log::info('Certificado encontrado', ['certificado' => $certificado]); // Loguea el certificado
         if (empty($certificado)) {
             Log::error('Error: Certificado no encontrado para la empresa', ['empresa_id' => $empresa->id]);
             return false;
@@ -264,12 +264,12 @@ class EnvioDte extends Model
         $envio->nroDte = count($documentos);
         $envio->fchResol = $boleta == 0 ? $empresa->fechaResolucion : $empresa->fechaResolucionBoleta;
         $envio->nroResol = $boleta == 0 ? $empresa->numeroResolucion : $empresa->numeroResolucionBoleta;
-        Log::info('Antes de guardar EnvioDte', ['envio' => $envio]); // Loguea el objeto $envio antes de guardarlo
+        //Log::info('Antes de guardar EnvioDte', ['envio' => $envio]); // Loguea el objeto $envio antes de guardarlo
         if (! $envio->save()) {
             Log::error('Error al guardar EnvioDte en la base de datos'); // Log si falla el guardado
             return false; // Fundamental: retornar false si no se puede guardar.
         }
-        Log::info('EnvioDte guardado con ID', ['envio_id' => $envio->id]);
+       // Log::info('EnvioDte guardado con ID', ['envio_id' => $envio->id]);
 
 
         $envio->setDteId = 'RUT_' . $empresa->rut . '_ENV_' . $envio->id;

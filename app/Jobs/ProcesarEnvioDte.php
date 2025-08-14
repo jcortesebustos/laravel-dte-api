@@ -36,10 +36,10 @@ class ProcesarEnvioDte implements ShouldQueue
     {
         /* @var Documento $documento */
         /* @var EnvioDte $empaquetado */
-        Log::info('Inicio handle de ProcesarEnvioDte', ['job_id' => $this->job->uuid(), 'documento_id' => $this->id]);
+       // Log::info('Inicio handle de ProcesarEnvioDte', ['job_id' => $this->job->uuid(), 'documento_id' => $this->id]);
         try {
             $documento = Documento::find($this->id);
-            Log::info('Documento encontrado', ['documento' => $documento]); // Loguea el objeto completo
+           // Log::info('Documento encontrado', ['documento' => $documento]); // Loguea el objeto completo
             if (!$documento) {
                 Log::error('Documento no encontrado en el Job', ['documento_id' => $this->id]);
                 return; // Importante: Salir del Job si no se encuentra el documento.
@@ -49,6 +49,7 @@ class ProcesarEnvioDte implements ShouldQueue
             $empaque = [];
             array_push($empaque, $documento);
             $boleta = in_array($documento->idDoc->TipoDTE, [39, 41]) ? 1 : 0;
+            /
             Log::info('Antes de empaquetarDtes', [
                 'empaque' => $empaque,
                 'boleta' => $boleta
@@ -79,6 +80,6 @@ class ProcesarEnvioDte implements ShouldQueue
                 'trace' => $e->getTraceAsString() // Importante: Incluir el stack trace completo.
             ]);
         }
-        Log::info('Fin handle de ProcesarEnvioDte', ['job_id' => $this->job->uuid()]);
+        //Log::info('Fin handle de ProcesarEnvioDte', ['job_id' => $this->job->uuid()]);
     }
 }

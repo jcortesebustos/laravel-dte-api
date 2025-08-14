@@ -1038,9 +1038,9 @@ class Documento extends Model
         try {
             /* @var CertificadoEmpresa $certificado  */
             $certificado = $this->empresa->certificados()->where('enUso', 1)->first();
-            Log::info('Inicio consultarEstadoSii', ['certificado' => $certificado]);
+            //Log::info('Inicio consultarEstadoSii', ['certificado' => $certificado]);
             $siiComponent = new Sii($this->empresa);
-            Log::info('Sii Empresa', ['Empresa' => $this->empresa]);
+            //Log::info('Sii Empresa', ['Empresa' => $this->empresa]);
             if ($this->glosaEstadoSii != 'DTE Recibido' || $force) {
                 $documento = [
                     'rut_emisor' => $this->emisor->RUTEmisor,
@@ -1052,16 +1052,16 @@ class Documento extends Model
                     'fecha_emision_boleta' => $this->idDoc->FchEmis->format('d-m-Y'),
                     'monto' => (string) $this->totales->MntTotal
                 ];
-                Log::info('documento a consultar', ['documento' => $documento]);
+                //Log::info('documento a consultar', ['documento' => $documento]);
 
                 $data = $siiComponent->consultarEstadoDte($documento, $token);
-                Log::info('data post consultar estado documento', ['data' => $data]);
+                //Log::info('data post consultar estado documento', ['data' => $data]);
 
                 if (!in_array($this->idDoc->TipoDTE, [39, 41])) {
                     $formato = str_replace('SII:', '', $data);
-                    Log::info('data formato', ['formato' => $formato]);
+                    //Log::info('data formato', ['formato' => $formato]);
                     $xml = simplexml_load_string($formato);
-                    Log::info('data xml', ['xml' => $xml]);
+                    //Log::info('data xml', ['xml' => $xml]);
                     $this->estadoSii = $xml->RESP_HDR->ESTADO;
                     $this->glosaEstadoSii = $xml->RESP_HDR->GLOSA_ESTADO;
                     $this->errCode = $xml->RESP_HDR->ERR_CODE;

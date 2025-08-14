@@ -461,7 +461,7 @@ class Sii
     {
         if ($this->runningInConsole) {
             echo 'empresa no encontrada';
-            Log::info('La empresa no fue encontrada');
+            Log::error('La empresa no fue encontrada');
             exit();
         } else {
             throw new HttpResponseException(response()->json([
@@ -496,13 +496,13 @@ class Sii
         $dom->loadXML($body);
         $xmlTool = new \FR3D\XmlDSig\Adapter\XmlseclibsAdapter();
         $certificado = $this->empresa->certificados()->where('enUso', 1)->first();
-        Log::info('Certificado', ['certificado' => $certificado]);
-        Log::info('Path Certificado', ['path' => $certificado->originalFile->file_path]);
+        //Log::info('Certificado', ['certificado' => $certificado]);
+        //Log::info('Path Certificado', ['path' => $certificado->originalFile->file_path]);
         $pfx = Storage::cloud()->get($certificado->originalFile->file_path);
 
         $key = [];
         openssl_pkcs12_read($pfx, $key, $certificado->password);
-        Log::info('key', ['key' => $key]);
+        //Log::info('key', ['key' => $key]);
         if (!empty($key) && key_exists('pkey', $key)) {
             $xmlTool->setPrivateKey($key['pkey']);
             $xmlTool->setpublickey($key['cert']);
@@ -516,9 +516,9 @@ class Sii
     public function obtenerToken($boleta = 0)
     {
         try {
-            Log::info('Inicio obtenerToken', ['boleta' => $boleta]);
+            //Log::info('Inicio obtenerToken', ['boleta' => $boleta]);
             $semilla = $this->obtenerSemilla($boleta);
-            Log::info('semilla', ['semilla' => $semilla]);
+            //Log::info('semilla', ['semilla' => $semilla]);
 
             if (! $semilla) {
                 Log::warning('No hay Semilla Token SII');
@@ -526,7 +526,7 @@ class Sii
             }
 
             $dom = $this->firmarSemilla($semilla);
-            Log::info('firma Semilla', ['dom' => $dom]);
+            //Log::info('firma Semilla', ['dom' => $dom]);
 
             if ($boleta == 0) {
                 $wsdl_token = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::TokenProduccion : self::TokenCertificacion;
@@ -545,7 +545,7 @@ class Sii
             } else {
                 $client = new \GuzzleHttp\Client();
                 $url = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::TokenBoletaProduccion : self::TokenBoletaCertificacion;
-                Log::info('URL Semilla Token', ['url' => $url]);
+                //Log::info('URL Semilla Token', ['url' => $url]);
                 $response = $client->post(
                     $url,
                     [
@@ -557,7 +557,7 @@ class Sii
                         ]
                     ]
                 );
-                Log::info('Response URL', ['url' => $response->getBody()->getContents()]);
+                //Log::info('Response URL', ['url' => $response->getBody()->getContents()]);
                 $body_token = $response->getBody()->getContents();
             }
 
@@ -1408,16 +1408,16 @@ class Sii
             if ($documento['tipo'] == 39 || $documento['tipo'] == 41) {
                 $boleta = 1;
             }
-            Log::info('Inicio consultarEstadoDte', ['documento' => $documento]);
+            //Log::info('Inicio consultarEstadoDte', ['documento' => $documento]);
             if ($tokenSII === false) {
                 for ($i = 0; $i < $this->reintentos; $i++) {
-                    Log::info('Intento de obtener token ' . $i);
+                   // Log::info('Intento de obtener token ' . $i);
                     $tokenSII = $this->obtenerToken($boleta);
                     if ($tokenSII !== false) {
                         break;
                     }
                 }
-                Log::info('Token SII', ['tokenSII' => $tokenSII]);
+                //Log::info('Token SII', ['tokenSII' => $tokenSII]);
             }
 
             if ($tokenSII === false) {
@@ -1462,11 +1462,11 @@ class Sii
                     }
                 }
             } else {
-                Log::info('ambiente ' . $this->ambiente);
+                //Log::info('ambiente ' . $this->ambiente);
                 $array_rut_receptor = self::getRutArray($documento['rut_receptor']);
-                Log::info('array_rut_receptor', ['array_rut_receptor' => $array_rut_receptor]);
+                //Log::info('array_rut_receptor', ['array_rut_receptor' => $array_rut_receptor]);
                 $url_base = ($this->ambiente == self::AMBIENTE_PRODUCCION) ? self::ApiBoletaProduccion : self::ApiBoletaCertificacion;
-                Log::info('Es Boleta. URL BASE', ['url_base' => $url_base]);
+                //Log::info('Es Boleta. URL BASE', ['url_base' => $url_base]);
                 $client = new \GuzzleHttp\Client();
                 $url = "{$url_base}/{$array_rut_emisor['number']}-{$array_rut_emisor['dv']}-{$documento['tipo']}-{$documento['folio']}/estado";
                 $request = $client->get($url, [
@@ -1482,7 +1482,7 @@ class Sii
                         'Cookie' => "TOKEN={$tokenSII}",
                     ]
                 ]);
-                Log::info('Request Api SII', ['request' => $request->getBody()->getContents()]);
+               // Log::info('Request Api SII', ['request' => $request->getBody()->getContents()]);
                 $contents = json_decode($request->getBody()->getContents());
                 return $contents;
             }

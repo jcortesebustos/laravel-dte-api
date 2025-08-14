@@ -110,7 +110,7 @@ class CertificadoDigitalController extends Controller
     public function upload(Company $company, UploadDigitalCertificateRequest $request)
     {
         $p12 = Empresa::parseCertificado($request);
-        Log::info('p12 uploadCertificado', ['p12' => $p12]);
+        //Log::info('p12 uploadCertificado', ['p12' => $p12]);
         if ($p12 === false) {
             return redirect()->back();
         }
