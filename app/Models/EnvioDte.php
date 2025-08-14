@@ -213,6 +213,19 @@ class EnvioDte extends Model
         // 6) Listo
         return $xml;
     }
+    private function dteTieneCharsIlegales(string $xml): bool
+    {
+        // C0 + DEL
+        if (preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $xml)) return true;
+        // C1
+        if (preg_match('/[\x80-\x9F]/', $xml)) return true;
+        // Secuencias UTF-8 típicas problemáticas presentes en fuentes Windows/Unicode
+        if (strpos($xml, "\xE2\x80\x93") !== false) return true; // U+2013 – en dash
+        if (strpos($xml, "\xE2\x80\x94") !== false) return true; // U+2014 — em dash
+        if (strpos($xml, "\xE2\x80\xA6") !== false) return true; // U+2026 …
+        if (strpos($xml, "\xC2\xA0")     !== false) return true; // NBSP
+        return false;
+    }
     /*
      * Funcion para crear envios dte emitidos
      */
@@ -339,7 +352,14 @@ class EnvioDte extends Model
             $dte->formatOutput = false;
             $dte->preserveWhiteSpace = true;
             $archivo = $documento->archivos()->where('tipo', TipoArchivo::DTE)->latest()->first();
-            $contenido = $this->sanitizeXmlForSii($archivo->content());
+            $contenido = $archivo->content(); 
+            if ($this->dteTieneCharsIlegales($contenido)) {
+                throw new \RuntimeException(
+                    'DTE contiene caracteres no permitidos para ISO-8859-1/XML 1.0. ' .
+                    'Debe ser regenerado y firmado nuevamente antes de enviar (evitar “–”, “—”, NBSP, etc.).'
+                );
+            }
+            //$contenido = $this->sanitizeXmlForSii($archivo->content());
             libxml_use_internal_errors(true);
             if (!$dte->loadXML($contenido)) {
                 $errs = array_map(function($e){ return trim($e->message); }, libxml_get_errors());
