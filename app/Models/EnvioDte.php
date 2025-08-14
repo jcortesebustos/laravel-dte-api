@@ -148,7 +148,28 @@ class EnvioDte extends Model
     {
         return $this->belongsTo(\App\Models\Empresa::class);
     }
+    private function sanitizeXmlForSii(string $xml): string
+    {
+        // Normaliza signos tipográficos y espacios no separables
+        $map = [
+            '&#x2013;' => '-', '&#8211;' => '-', '–' => '-',   // en dash
+            '&#x2014;' => '-', '&#8212;' => '-', '—' => '-',   // em dash
+            '&#x2010;' => '-', '‐' => '-',                     // hyphen
+            '&#x2212;' => '-', '&#8722;' => '-', '−' => '-',   // minus
+            '&#x2018;' => "'", '&#8216;' => "'", '‘' => "'",   // comillas
+            '&#x2019;' => "'", '&#8217;' => "'", '’' => "'",
+            '&#x201C;' => '"', '&#8220;' => '"', '“' => '"',
+            '&#x201D;' => '"', '&#8221;' => '"', '”' => '"',
+            '&#x2026;' => '...', '&#8230;' => '...', '…' => '...',
+            '&#x00A0;' => ' ', '&#160;' => ' ', "\xC2\xA0" => ' ', // NBSP
+        ];
+        $xml = strtr($xml, $map);
 
+        // Quita caracteres no permitidos por XML 1.0 (excepto \t \n \r)
+        $xml = preg_replace('/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/u', '', $xml);
+
+        return $xml;
+    }
     /*
      * Funcion para crear envios dte emitidos
      */
@@ -275,7 +296,14 @@ class EnvioDte extends Model
             $dte->formatOutput = false;
             $dte->preserveWhiteSpace = true;
             $archivo = $documento->archivos()->where('tipo', TipoArchivo::DTE)->latest()->first();
-            $dte->loadXML($archivo->content());
+            $contenido = $this->sanitizeXmlForSii($archivo->content());
+            libxml_use_internal_errors(true);
+            if (!$dte->loadXML($contenido)) {
+                $errs = array_map(function($e){ return trim($e->message); }, libxml_get_errors());
+                libxml_clear_errors();
+                throw new \RuntimeException('Error cargando DTE: '.implode(' | ', $errs));
+            }
+            //$dte->loadXML($archivo->content());
             $dte->encoding = 'ISO-8859-1';
             $NodoDTE = $dte->getElementsByTagName('DTE')->item(0);
             $importar = $dom->importNode($NodoDTE, true);
