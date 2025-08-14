@@ -148,26 +148,69 @@ class EnvioDte extends Model
     {
         return $this->belongsTo(\App\Models\Empresa::class);
     }
-    private function sanitizeXmlForSii(string $xml): string
+    private function sanitizeXmlForSii(?string $xml): string
     {
-        // Normaliza signos tipográficos y espacios no separables
-        $map = [
-            '&#x2013;' => '-', '&#8211;' => '-', '–' => '-',   // en dash
-            '&#x2014;' => '-', '&#8212;' => '-', '—' => '-',   // em dash
-            '&#x2010;' => '-', '‐' => '-',                     // hyphen
-            '&#x2212;' => '-', '&#8722;' => '-', '−' => '-',   // minus
-            '&#x2018;' => "'", '&#8216;' => "'", '‘' => "'",   // comillas
-            '&#x2019;' => "'", '&#8217;' => "'", '’' => "'",
-            '&#x201C;' => '"', '&#8220;' => '"', '“' => '"',
-            '&#x201D;' => '"', '&#8221;' => '"', '”' => '"',
-            '&#x2026;' => '...', '&#8230;' => '...', '…' => '...',
-            '&#x00A0;' => ' ', '&#160;' => ' ', "\xC2\xA0" => ' ', // NBSP
+        // Asegura string
+        $xml = (string) $xml;
+
+        // 1) Normaliza entidades HTML conocidas a sus caracteres (para capturarlas abajo)
+        //    Ojo: solo afectará secuencias &...; no toca bytes ISO directamente.
+        //    Usamos UTF-8 aquí solo para decodificar entidades (&…;), el output sigue siendo bytes.
+        $xml = html_entity_decode($xml, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        // 2) Reemplazos típicos en UTF-8 (—, –, ‘ ’, “ ”, …, NBSP)
+        $utf8Map = [
+            "\xE2\x80\x93" => '-', // U+2013 – en dash
+            "\xE2\x80\x94" => '-', // U+2014 — em dash
+            "\xE2\x88\x92" => '-', // U+2212 − minus
+            "\xE2\x80\x98" => "'", // U+2018 ‘
+            "\xE2\x80\x99" => "'", // U+2019 ’
+            "\xE2\x80\x9C" => '"', // U+201C “
+            "\xE2\x80\x9D" => '"', // U+201D ”
+            "\xE2\x80\xA6" => '...', // U+2026 …
+            "\xC2\xA0"     => ' ', // NBSP
         ];
-        $xml = strtr($xml, $map);
+        $xml = strtr($xml, $utf8Map);
 
-        // Quita caracteres no permitidos por XML 1.0 (excepto \t \n \r)
-        $xml = preg_replace('/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/u', '', $xml);
+        // 3) Reemplazos directos de entidades numéricas frecuentes (por si quedaron)
+        $xml = strtr($xml, [
+            '&#8211;' => '-', '&#x2013;' => '-',
+            '&#8212;' => '-', '&#x2014;' => '-',
+            '&#8722;' => '-', '&#x2212;' => '-',
+            '&#8216;' => "'", '&#x2018;' => "'",
+            '&#8217;' => "'", '&#x2019;' => "'",
+            '&#8220;' => '"', '&#x201C;' => '"',
+            '&#8221;' => '"', '&#x201D;' => '"',
+            '&#8230;' => '...', '&#x2026;' => '...',
+            '&#160;'  => ' ',  '&#x00A0;' => ' ',
+            '&ndash;' => '-',  '&mdash;' => '-',
+            '&lsquo;' => "'",  '&rsquo;' => "'",
+            '&ldquo;' => '"',  '&rdquo;' => '"',
+            '&hellip;' => '...',
+            '&nbsp;' => ' ',
+        ]);
 
+        // 4) Reemplazos para bytes Windows-1252 (0x80–0x9F) que NO son válidos en ISO-8859-1
+        $win1252Map = [
+            "\x85" => '...', // …
+            "\x91" => "'",   // ‘
+            "\x92" => "'",   // ’
+            "\x93" => '"',   // “
+            "\x94" => '"',   // ”
+            "\x96" => '-',   // – en dash
+            "\x97" => '-',   // — em dash
+            "\xA0" => ' ',   // NBSP (por si entró como byte)
+        ];
+        $xml = strtr($xml, $win1252Map);
+
+        // 5) Quita caracteres prohibidos por XML 1.0 (excepto \t \n \r)
+        //    (SIN bandera /u para que no falle con entradas no-UTF8)
+        // C0 + DEL
+        $xml = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $xml);
+        // C1 (0x80–0x9F): si quedó alguno sin mapear, elimínalo
+        $xml = preg_replace('/[\x80-\x9F]/', '', $xml);
+
+        // 6) Listo
         return $xml;
     }
     /*
