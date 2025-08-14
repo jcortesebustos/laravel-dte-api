@@ -49,7 +49,7 @@ class ProcesarEnvioDte implements ShouldQueue
             $empaque = [];
             array_push($empaque, $documento);
             $boleta = in_array($documento->idDoc->TipoDTE, [39, 41]) ? 1 : 0;
-            /
+            
             Log::info('Antes de empaquetarDtes', [
                 'empaque' => $empaque,
                 'boleta' => $boleta
