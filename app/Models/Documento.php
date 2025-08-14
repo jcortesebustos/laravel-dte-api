@@ -191,6 +191,76 @@ class Documento extends Model
         'estado' => 'integer',
     ];
 
+    // Sanea texto para SII: reemplaza “–/—/…” y similares; quita controles ilegales.
+    // SIEMPRE retorna string (sin /u para no devolver null en no-UTF8).
+    private function sanitizeSiiText($s): string
+    {
+        $s = (string) $s;
+
+        // Decodifica entidades HTML si vinieran literales
+        $s = html_entity_decode($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        // UTF-8 típicos → ASCII seguro
+        $s = strtr($s, [
+            "\xE2\x80\x93" => '-',  // – en dash
+            "\xE2\x80\x94" => '-',  // — em dash
+            "\xE2\x88\x92" => '-',  // − minus
+            "\xE2\x80\x98" => "'",  // ‘
+            "\xE2\x80\x99" => "'",  // ’
+            "\xE2\x80\x9C" => '"',  // “
+            "\xE2\x80\x9D" => '"',  // ”
+            "\xE2\x80\xA6" => '...',// …
+            "\xC2\xA0"     => ' ',  // NBSP
+        ]);
+
+        // Entidades numéricas/nombre si todavía quedan
+        $s = strtr($s, [
+            '&#8211;' => '-', '&#x2013;' => '-', '&ndash;' => '-',
+            '&#8212;' => '-', '&#x2014;' => '-', '&mdash;' => '-',
+            '&#8722;' => '-', '&#x2212;' => '-',
+            '&#8216;' => "'", '&#x2018;' => "'", '&lsquo;' => "'",
+            '&#8217;' => "'", '&#x2019;' => "'", '&rsquo;' => "'",
+            '&#8220;' => '"', '&#x201C;' => '"', '&ldquo;' => '"',
+            '&#8221;' => '"', '&#x201D;' => '"', '&rdquo;' => '"',
+            '&#8230;' => '...', '&#x2026;' => '...', '&hellip;' => '...',
+            '&#160;'  => ' ',  '&#x00A0;' => ' ', '&nbsp;' => ' ',
+        ]);
+
+        // Bytes Windows-1252 comunes
+        $s = strtr($s, [
+            "\x85" => '...', "\x91" => "'", "\x92" => "'", "\x93" => '"',
+            "\x94" => '"',   "\x96" => '-', "\x97" => '-', "\xA0" => ' ',
+        ]);
+
+        // Quitar controles prohibidos XML 1.0 (excepto \t \n \r)
+        $s = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $s) ?? '';
+        $s = preg_replace('/[\x80-\x9F]/', '', $s) ?? '';
+
+        // Garantizar que es compatible con ISO-8859-1 (lo que exige tu DOM/export)
+        if (!mb_check_encoding($s, 'ISO-8859-1')) {
+            $t = @iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $s);
+            if ($t !== false) $s = $t;
+        }
+        return $s;
+    }
+    // Sanea sólo campos de texto del Receptor (evita tocar numéricos)
+    private function sanitizeReceptorAttributes(array $attrs): array
+    {
+        // Lista blanca de campos típicamente textuales
+        $textFields = [
+            'RznSocRecep','GiroRecep','DirRecep','CmnaRecep','CiudadRecep','Contacto',
+            'DirPostal','CmnaPostal','CiudadPostal','CorreoRecep',
+        ];
+
+        foreach ($attrs as $k => $v) {
+            if ($v === null) continue;
+            // si está en lista blanca o no es puramente numérico, sanitiza
+            if (in_array($k, $textFields, true) || !is_numeric($v)) {
+                $attrs[$k] = $this->sanitizeSiiText($v);
+            }
+        }
+        return $attrs;
+    }
     /**
      * The data of the empresa referenced to the documento.
      */
@@ -357,7 +427,9 @@ class Documento extends Model
 
         if (! empty($this->receptor)) {
             $dte_documento->getEncabezado()->setReceptor();
-            foreach ($this->receptor->getAttributes() as $index => $value) {
+            $attrs = $this->receptor ? $this->receptor->getAttributes() : [];
+            $attrs = $this->sanitizeReceptorAttributes($attrs); // ⬅️ sanitiza ANTES de setear
+            foreach ($attrs as $index => $value) {
                 $set = 'set' . $index;
                 if (method_exists($dte_documento->getEncabezado()->getReceptor(), $set) && $value !== null) {
                     $dte_documento->getEncabezado()->getReceptor()->$set((string) $value);
