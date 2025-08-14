@@ -9,6 +9,7 @@ use App\Models\Empresa;
 use App\Models\Empresa as Company;
 use App\Repositories\CertificadoEmpresaRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class CertificadoDigitalController extends Controller
