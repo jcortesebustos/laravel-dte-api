@@ -253,7 +253,7 @@ class Documento extends Model
         ];
 
         foreach ($attrs as $k => $v) {
-            if ($v === null || is_empty($v)) continue;
+            if ($v === null || empty($v)) continue;
             // si está en lista blanca o no es puramente numérico, sanitiza
             if (in_array($k, $textFields, true) || !is_numeric($v)) {
                 $attrs[$k] = $this->sanitizeSiiText($v);
