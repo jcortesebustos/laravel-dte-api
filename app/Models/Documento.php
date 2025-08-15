@@ -428,7 +428,7 @@ class Documento extends Model
         if (! empty($this->receptor)) {
             $dte_documento->getEncabezado()->setReceptor();
             $attrs = $this->receptor ? $this->receptor->getAttributes() : [];
-            $attrs = $this->sanitizeReceptorAttributes($attrs); // ⬅️ sanitiza ANTES de setear
+            //$attrs = $this->sanitizeReceptorAttributes($attrs); // ⬅️ sanitiza ANTES de setear
             foreach ($attrs as $index => $value) {
                 $set = 'set' . $index;
                 if (method_exists($dte_documento->getEncabezado()->getReceptor(), $set) && $value !== null) {
